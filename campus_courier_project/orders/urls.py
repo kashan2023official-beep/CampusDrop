@@ -1,0 +1,13 @@
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('dashboard/', views.DashboardView.as_view(), name='dashboard'),
+    path('orders/new/', views.OrderCreateView.as_view(), name='order_create'),
+    path('orders/', views.OrderListView.as_view(), name='order_list'),
+    path('orders/<int:pk>/', views.OrderDetailView.as_view(), name='order_detail'),
+    path('orders/<int:pk>/cancel/', views.order_cancel_view, name='order_cancel'),
+    path('api/order/<int:pk>/status/', views.order_status_json, name='order_status_json'),
+    path('api/campus-bounds/', views.campus_bounds_view, name='campus_bounds'),
+    path('api/estimate-distance/', views.distance_estimate_view, name='distance_estimate'),
+]

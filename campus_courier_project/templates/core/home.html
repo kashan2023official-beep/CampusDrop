@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Welcome — Campus Courier{% endblock %}
+
+{% block content %}
+<div class="py-12 text-center">
+  <h1 class="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">
+    Hyperlocal Parcel Delivery for UET Lahore
+  </h1>
+  <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">
+    Send parcels across campus quickly and securely. Couriers deliver with ML-predicted fair fares in PKR.
+  </p>
+  <div class="mt-8 flex justify-center space-x-4">
+    <a href="{% url 'login' %}" class="px-6 py-3 text-base font-medium text-white bg-indigo-600 rounded-md shadow hover:bg-indigo-700 transition">
+      Login
+    </a>
+    <a href="{% url 'register' %}" class="px-6 py-3 text-base font-medium text-indigo-700 bg-indigo-50 border border-indigo-200 rounded-md hover:bg-indigo-100 transition">
+      Create Account
+    </a>
+  </div>
+</div>
+{% endblock %}

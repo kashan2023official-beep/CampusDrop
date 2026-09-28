@@ -1,0 +1,15 @@
+{
+    "trained_at": "2026-09-28T21:29:57.732214",
+    "n_samples": 8000,
+    "mae": 12.091219563186437,
+    "features": [
+        "distance_km",
+        "weight_kg",
+        "peak_hour",
+        "is_food",
+        "is_electronics",
+        "is_clothing",
+        "is_books",
+        "is_other"
+    ]
+}

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard — Campus Courier{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+  <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
+      <p class="mt-1 text-sm text-gray-500">
+        Current Mode:
+        <span class="font-semibold uppercase {% if current_mode == 'courier' %}text-emerald-600{% else %}text-blue-600{% endif %}">
+          {{ current_mode }}
+        </span>
+      </p>
+    </div>
+    <div>
+      <form method="post" action="{% url 'toggle_role' %}" class="inline">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{% url 'dashboard' %}">
+        <button type="submit" class="px-4 py-2 text-sm font-medium text-white {% if current_mode == 'courier' %}bg-blue-600 hover:bg-blue-700{% else %}bg-emerald-600 hover:bg-emerald-700{% endif %} rounded-md transition">
+          Switch to {% if current_mode == 'courier' %}Sender{% else %}Courier{% endif %} Mode
+        </button>
+      </form>
+    </div>
+  </div>
+
+  {% if current_mode == 'sender' %}
+    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 space-y-4">
+      <h2 class="text-lg font-semibold text-gray-900">Sender Actions</h2>
+      <p class="text-sm text-gray-500">Easily create new delivery requests across UET Lahore or view existing dispatches.</p>
+      <div class="flex flex-wrap gap-4 pt-2">
+        <a href="{% url 'order_create' %}" class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-700 transition">
+          Create Order
+        </a>
+        <a href="{% url 'order_list' %}" class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 transition">
+          My Orders
+        </a>
+      </div>
+    </div>
+  {% else %}
+    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 space-y-4">
+      <h2 class="text-lg font-semibold text-gray-900">Courier Feed & Jobs</h2>
+      <p class="text-sm text-gray-500">Pick up active parcel orders across UET Lahore or manage your accepted delivery runs.</p>
+      <div class="flex flex-wrap gap-4 pt-2">
+        <a href="{% url 'courier_available' %}" class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-700 transition">
+          Browse Available Orders
+        </a>
+        <a href="{% url 'courier_jobs' %}" class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 transition">
+          My Jobs
+        </a>
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

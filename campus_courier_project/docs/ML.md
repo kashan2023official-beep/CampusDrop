@@ -12,9 +12,14 @@ Predict a fair fare in PKR given order features. Runs as a management command th
 |---|---|---|
 | distance_km | float | 0.1 – 10.0 |
 | weight_kg | float | 0.1 – 20.0 |
-| hour | int | 0 – 23 |
-| item_type_code | int | 0 – 5 (label-encoded) |
+| hour | int | 0 – 23 (Used for synthetic generation only) |
+| item_type_code | int | 0 – 5 (Used for synthetic generation only) |
+| peak_hour | int | 0 or 1 (1 if hour ∈ {8,9,12,13,17,18}) |
+| is_food, is_electronics, is_clothing, is_books, is_other | int | 0 or 1 (one-hot, DOCUMENT is the reference) |
 
+**Feature order**: [distance_km, weight_kg, peak_hour, is_food, is_electronics, is_clothing, is_books, is_other]
+
+One-hot encoding and the peak_hour binary are required because the synthetic target is nonlinear in hour and item_type.
 ## Synthetic Data Formula (before training)
 
 ```
@@ -55,8 +60,16 @@ def _load():
         _model = joblib.load(MODEL_PATH)
     return _model
 
-def predict_fare(distance_km, weight_kg, hour, item_type_code):
-    X = [[distance_km, weight_kg, hour, item_type_code]]
+def predict_fare(distance_km, weight_kg, hour, item_type):
+    peak_hour = 1 if hour in [8, 9, 12, 13, 17, 18] else 0
+    is_food = 1 if item_type == 'FOOD' else 0
+    is_electronics = 1 if item_type == 'ELECTRONICS' else 0
+    is_clothing = 1 if item_type == 'CLOTHING' else 0
+    is_books = 1 if item_type == 'BOOKS' else 0
+    is_other = 1 if item_type == 'OTHER' else 0
+
+    X = [[distance_km, weight_kg, peak_hour,
+          is_food, is_electronics, is_clothing, is_books, is_other]]
     return float(_load().predict(X)[0])
 ```
 

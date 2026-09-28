@@ -1,0 +1,75 @@
+{% extends 'insights/base_insights.html' %}
+
+{% block insights_content %}
+<div class="space-y-6">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <h2 class="text-lg font-bold text-gray-900">All Campus Orders ({{ orders|length }})</h2>
+      <p class="text-xs text-gray-500">Filter and audit all dispatches across the campus boundary.</p>
+    </div>
+    <!-- Quick Status Filters -->
+    <div class="flex flex-wrap gap-2 text-xs">
+      <a href="{% url 'insights_orders' %}" class="px-2.5 py-1 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200">All</a>
+      <a href="{% url 'insights_orders' %}?status=PENDING" class="px-2.5 py-1 rounded-md bg-amber-100 text-amber-800 hover:bg-amber-200">Pending</a>
+      <a href="{% url 'insights_orders' %}?status=ACCEPTED" class="px-2.5 py-1 rounded-md bg-blue-100 text-blue-800 hover:bg-blue-200">Accepted</a>
+      <a href="{% url 'insights_orders' %}?status=PICKED_UP" class="px-2.5 py-1 rounded-md bg-indigo-100 text-indigo-800 hover:bg-indigo-200">Picked Up</a>
+      <a href="{% url 'insights_orders' %}?status=DELIVERED" class="px-2.5 py-1 rounded-md bg-emerald-100 text-emerald-800 hover:bg-emerald-200">Delivered</a>
+      <a href="{% url 'insights_orders' %}?status=CANCELLED" class="px-2.5 py-1 rounded-md bg-red-100 text-red-800 hover:bg-red-200">Cancelled</a>
+    </div>
+  </div>
+
+  <div class="bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200 text-sm">
+        <thead class="bg-gray-50 text-gray-600 text-xs uppercase font-medium">
+          <tr>
+            <th class="px-6 py-3 text-left">Order</th>
+            <th class="px-6 py-3 text-left">Sender</th>
+            <th class="px-6 py-3 text-left">Courier</th>
+            <th class="px-6 py-3 text-left">Route</th>
+            <th class="px-6 py-3 text-left">Item / Weight</th>
+            <th class="px-6 py-3 text-left">Status</th>
+            <th class="px-6 py-3 text-left">Fare</th>
+            <th class="px-6 py-3 text-left">Created</th>
+            <th class="px-6 py-3 text-right">Details</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+          {% for o in orders %}
+            <tr class="hover:bg-gray-50 transition">
+              <td class="px-6 py-3 font-semibold text-gray-900">#{{ o.id }}</td>
+              <td class="px-6 py-3 text-gray-700">{{ o.sender.username }}</td>
+              <td class="px-6 py-3 text-gray-700">{{ o.courier.username|default:"—" }}</td>
+              <td class="px-6 py-3 text-gray-600 text-xs">
+                {{ o.pickup_label|default:"Campus" }} &rarr; {{ o.dropoff_label|default:"Campus" }}
+              </td>
+              <td class="px-6 py-3 text-gray-700">
+                {{ o.get_item_type_display }} ({{ o.weight_kg }} kg)
+              </td>
+              <td class="px-6 py-3">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold
+                  {% if o.status == 'DELIVERED' %}bg-emerald-100 text-emerald-800
+                  {% elif o.status == 'PENDING' %}bg-amber-100 text-amber-800
+                  {% elif o.status == 'ACCEPTED' %}bg-blue-100 text-blue-800
+                  {% elif o.status == 'PICKED_UP' %}bg-indigo-100 text-indigo-800
+                  {% else %}bg-gray-100 text-gray-800{% endif %}">
+                  {{ o.get_status_display }}
+                </span>
+              </td>
+              <td class="px-6 py-3 text-gray-700">PKR {{ o.predicted_fare|default:"0" }}</td>
+              <td class="px-6 py-3 text-gray-500 whitespace-nowrap">{{ o.created_at|date:"M d, H:i" }}</td>
+              <td class="px-6 py-3 text-right">
+                <a href="{% url 'order_detail' o.id %}" class="text-indigo-600 hover:text-indigo-900 font-medium text-xs">
+                  View &rarr;
+                </a>
+              </td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="9" class="px-6 py-6 text-center text-gray-500">No orders match the filter criteria.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

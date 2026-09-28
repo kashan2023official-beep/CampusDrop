@@ -1,0 +1,110 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Campus Courier{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  {% block head %}{% endblock %}
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col">
+  <nav class="bg-white shadow">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="flex justify-between h-16 items-center">
+        <div class="flex items-center space-x-6">
+          <a href="{% url 'dashboard' %}" class="text-xl font-bold text-indigo-600 hover:text-indigo-700">
+            Campus Courier
+          </a>
+          {% if user.is_authenticated %}
+            {% if current_mode == 'sender' %}
+              <a href="{% url 'order_list' %}" class="text-sm font-medium text-gray-700 hover:text-indigo-600">
+                My Orders
+              </a>
+              <a href="{% url 'order_create' %}" class="text-sm font-medium text-gray-700 hover:text-indigo-600">
+                New Order
+              </a>
+            {% elif current_mode == 'courier' %}
+              <a href="{% url 'courier_available' %}" class="text-sm font-medium text-gray-700 hover:text-indigo-600">
+                Available Orders
+              </a>
+              <a href="{% url 'courier_jobs' %}" class="text-sm font-medium text-gray-700 hover:text-indigo-600">
+                My Jobs
+              </a>
+            {% endif %}
+          {% endif %}
+        </div>
+        <div class="flex items-center space-x-4">
+          {% if user.is_authenticated %}
+            <div class="flex items-center space-x-3">
+              {% if current_mode == 'courier' %}
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">
+                  Courier
+                </span>
+              {% else %}
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
+                  Sender
+                </span>
+              {% endif %}
+
+              <form method="post" action="{% url 'toggle_role' %}" class="inline">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.path }}">
+                <button type="submit" class="js-loading-btn px-3 py-1.5 text-xs font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 transition">
+                  Switch to {% if current_mode == 'courier' %}Sender{% else %}Courier{% endif %}
+                </button>
+              </form>
+
+              <a href="{% url 'profile' %}" class="text-sm font-medium text-gray-700 hover:text-indigo-600">
+                Profile
+              </a>
+
+              <form method="post" action="{% url 'logout' %}" class="inline">
+                {% csrf_token %}
+                <button type="submit" class="js-loading-btn text-sm font-medium text-red-600 hover:text-red-800 transition">
+                  Logout
+                </button>
+              </form>
+            </div>
+          {% else %}
+            <div class="flex items-center space-x-4">
+              <a href="{% url 'login' %}" class="text-sm font-medium text-gray-700 hover:text-indigo-600">
+                Login
+              </a>
+              <a href="{% url 'register' %}" class="px-3 py-1.5 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition">
+                Register
+              </a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-5xl mx-auto px-4 py-6 flex-1 w-full">
+    {% if messages %}
+      <div class="mb-6 space-y-2">
+        {% for message in messages %}
+          <div class="p-4 rounded-md text-sm {% if message.tags == 'error' %}bg-red-50 text-red-700 border border-red-200{% elif message.tags == 'success' %}bg-green-50 text-green-700 border border-green-200{% else %}bg-blue-50 text-blue-700 border border-blue-200{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="bg-white border-t border-gray-200 py-4 mt-auto">
+    <div class="max-w-5xl mx-auto px-4 text-center text-xs text-gray-500">
+      Campus Courier · UET Lahore · PKR
+    </div>
+  </footer>
+
+  {% block scripts %}{% endblock %}
+  <script src="{% static 'js/spinner.js' %}"></script>
+</body>
+</html>

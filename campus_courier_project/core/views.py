@@ -1,3 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import redirect
+from django.views import View
 
-# Create your views here.
+
+class HomeView(View):
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('dashboard')
+        return redirect('login')
