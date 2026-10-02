@@ -21,32 +21,36 @@ class Command(BaseCommand):
         # 1. Create demo_sender
         demo_sender = User.objects.create_user(
             username='demo_sender',
-            email='sender@campus.local',
+            email='demo.sender@uet.edu.pk',
             password='DemoPass123!',
             first_name='Demo',
             last_name='Sender',
         )
+        demo_sender.profile.phone = '03001234501'
+        demo_sender.profile.save()
 
         # 2. Create demo_courier with is_courier=True
         demo_courier = User.objects.create_user(
             username='demo_courier',
-            email='courier@campus.local',
+            email='demo.courier@uet.edu.pk',
             password='DemoPass123!',
             first_name='Demo',
             last_name='Courier',
         )
         demo_courier.profile.is_courier = True
-        demo_courier.profile.phone = '+923001234567'
+        demo_courier.profile.phone = '03001234502'
         demo_courier.profile.save()
 
         # 3. Create demo_admin (staff + superuser)
         demo_admin = User.objects.create_superuser(
             username='demo_admin',
-            email='admin@campus.local',
+            email='demo.admin@uet.edu.pk',
             password='DemoPass123!',
             first_name='Demo',
             last_name='Admin',
         )
+        demo_admin.profile.phone = '03001234503'
+        demo_admin.profile.save()
 
         users_created = 3
 

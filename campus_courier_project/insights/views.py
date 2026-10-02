@@ -43,7 +43,7 @@ def insights_orders(request):
 @login_required
 @staff_required
 def insights_users(request):
-    users = User.objects.select_related('profile').order_by('-date_joined')
+    users = User.objects.select_related('profile').defer('password').order_by('-date_joined')
     return render(request, 'insights/users.html', {'users': users})
 
 

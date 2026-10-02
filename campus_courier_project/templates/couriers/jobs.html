@@ -52,6 +52,13 @@
                 <span><strong>Distance:</strong> {{ job.distance_km }} km</span>
                 {% if job.notes %}<span class="italic text-gray-400">"{{ job.notes }}"</span>{% endif %}
               </div>
+              {% if job.contact_visible %}
+                <div class="mt-2 text-xs text-gray-700 bg-gray-50 p-2 rounded border border-gray-100 space-y-1">
+                  <p class="font-semibold text-gray-500 uppercase tracking-wide" style="font-size: 0.65rem;">Sender Contact</p>
+                  <p>Phone: <a href="tel:{{ job.sender.profile.phone }}" class="text-indigo-600 hover:underline">{{ job.sender.profile.phone }}</a></p>
+                  <p>Email: <a href="mailto:{{ job.sender.email }}" class="text-indigo-600 hover:underline">{{ job.sender.email }}</a></p>
+                </div>
+              {% endif %}
             </div>
 
             <div class="flex items-center space-x-3">
@@ -103,6 +110,7 @@
                 <th scope="col" class="px-6 py-3 text-left">Order</th>
                 <th scope="col" class="px-6 py-3 text-left">Route</th>
                 <th scope="col" class="px-6 py-3 text-left">Weight</th>
+                <th scope="col" class="px-6 py-3 text-left">Contact</th>
                 <th scope="col" class="px-6 py-3 text-left">Status</th>
                 <th scope="col" class="px-6 py-3 text-left">Delivered At</th>
                 <th scope="col" class="px-6 py-3 text-right">Details</th>
@@ -116,6 +124,14 @@
                     {{ job.pickup_label|default:"Campus" }} &rarr; {{ job.dropoff_label|default:"Campus" }}
                   </td>
                   <td class="px-6 py-4 text-gray-700">{{ job.weight_kg }} kg</td>
+                  <td class="px-6 py-4 text-gray-700 text-xs">
+                    {% if job.contact_visible %}
+                      <div><a href="tel:{{ job.sender.profile.phone }}" class="text-indigo-600 hover:underline">{{ job.sender.profile.phone }}</a></div>
+                      <div><a href="mailto:{{ job.sender.email }}" class="text-indigo-600 hover:underline">{{ job.sender.email }}</a></div>
+                    {% else %}
+                      <span class="text-gray-400">—</span>
+                    {% endif %}
+                  </td>
                   <td class="px-6 py-4">
                     {% if job.status == 'DELIVERED' %}
                       <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">Delivered</span>

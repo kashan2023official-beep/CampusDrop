@@ -58,3 +58,6 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order #{self.id} [{self.status}]"
+
+    def contact_visible(self):
+        return self.status in {Status.ACCEPTED, Status.PICKED_UP, Status.DELIVERED}
