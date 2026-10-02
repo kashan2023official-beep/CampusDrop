@@ -59,12 +59,12 @@ export function initStaticMaps(selector) {
 
         const btnSat = document.createElement('button');
         btnSat.textContent = 'Satellite';
-        btnSat.className = 'px-2 py-1 text-xs font-medium rounded bg-blue-600 text-white shadow-sm focus:outline-none';
+        btnSat.className = 'px-2 py-1 text-xs font-semibold rounded bg-brand-green text-brand-navy shadow-sm focus:outline-none';
         btnSat.type = 'button';
         
         const btnStr = document.createElement('button');
         btnStr.textContent = 'Streets';
-        btnStr.className = 'px-2 py-1 text-xs font-medium rounded bg-white text-gray-700 border border-gray-300 shadow-sm focus:outline-none hover:bg-gray-50';
+        btnStr.className = 'px-2 py-1 text-xs font-medium rounded bg-white text-brand-navySubtext border border-brand-grey shadow-sm focus:outline-none hover:bg-brand-greySubtle';
         btnStr.type = 'button';
 
         toggleDiv.appendChild(btnSat);
@@ -85,8 +85,8 @@ export function initStaticMaps(selector) {
             map.addLayer(satelliteBase);
             map.addLayer(satelliteLabels);
             map.removeLayer(streetsLayer);
-            btnSat.className = 'px-2 py-1 text-xs font-medium rounded bg-blue-600 text-white shadow-sm focus:outline-none';
-            btnStr.className = 'px-2 py-1 text-xs font-medium rounded bg-white text-gray-700 border border-gray-300 shadow-sm focus:outline-none hover:bg-gray-50';
+            btnSat.className = 'px-2 py-1 text-xs font-semibold rounded bg-brand-green text-brand-navy shadow-sm focus:outline-none';
+            btnStr.className = 'px-2 py-1 text-xs font-medium rounded bg-white text-brand-navySubtext border border-brand-grey shadow-sm focus:outline-none hover:bg-brand-greySubtle';
         });
 
         btnStr.addEventListener('click', (e) => {
@@ -94,12 +94,13 @@ export function initStaticMaps(selector) {
             map.removeLayer(satelliteBase);
             map.removeLayer(satelliteLabels);
             map.addLayer(streetsLayer);
-            btnStr.className = 'px-2 py-1 text-xs font-medium rounded bg-blue-600 text-white shadow-sm focus:outline-none';
-            btnSat.className = 'px-2 py-1 text-xs font-medium rounded bg-white text-gray-700 border border-gray-300 shadow-sm focus:outline-none hover:bg-gray-50';
+            btnStr.className = 'px-2 py-1 text-xs font-semibold rounded bg-brand-green text-brand-navy shadow-sm focus:outline-none';
+            btnSat.className = 'px-2 py-1 text-xs font-medium rounded bg-white text-brand-navySubtext border border-brand-grey shadow-sm focus:outline-none hover:bg-brand-greySubtle';
         });
 
         L.rectangle(bounds, {
-          color: '#4f46e5',
+          color: '#03EF62',
+          fillColor: '#03EF62',
           weight: 2,
           dashArray: '5, 5',
           fillOpacity: 0.05
@@ -131,7 +132,7 @@ export function initStaticMaps(selector) {
           [pickupLat, pickupLon],
           [dropoffLat, dropoffLon]
         ];
-        L.polyline(latlngs, {color: '#4f46e5', weight: 4, dashArray: '5, 10'}).addTo(map);
+        L.polyline(latlngs, {color: '#00C74E', weight: 4, dashArray: '5, 10'}).addTo(map);
 
         // Fit bounds to the two markers
         map.fitBounds(latlngs, { padding: [30, 30] });

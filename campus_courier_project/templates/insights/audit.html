@@ -4,15 +4,15 @@
 <div class="space-y-6">
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
     <div>
-      <h2 class="text-lg font-bold text-gray-900">Security & Operational Audit Log ({{ audits|length }})</h2>
-      <p class="text-xs text-gray-500">Immutable chronological record of all state mutations, predictions, and authentications.</p>
+      <h2 class="text-lg font-bold text-brand-navy">Security & Operational Audit Log ({{ audits|length }})</h2>
+      <p class="text-xs text-brand-navySubtext">Immutable chronological record of all state mutations, predictions, and authentications.</p>
     </div>
   </div>
 
-  <div class="bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden">
+  <div class="bg-white shadow-sm border border-brand-grey rounded-lg overflow-hidden">
     <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200 text-sm">
-        <thead class="bg-gray-50 text-gray-600 text-xs uppercase font-medium">
+      <table class="min-w-full divide-y divide-brand-grey text-sm">
+        <thead class="bg-brand-greySubtle text-brand-navySubtext text-xs uppercase font-medium">
           <tr>
             <th class="px-6 py-3 text-left">Timestamp</th>
             <th class="px-6 py-3 text-left">Actor</th>
@@ -23,19 +23,19 @@
             <th class="px-6 py-3 text-left">Metadata</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-200">
+        <tbody class="divide-y divide-brand-grey">
           {% for log in audits %}
-            <tr class="hover:bg-gray-50 transition">
-              <td class="px-6 py-3 text-gray-500 whitespace-nowrap">{{ log.created_at|date:"M d, H:i:s" }}</td>
-              <td class="px-6 py-3 font-medium text-gray-900">{{ log.actor.username|default:"System" }}</td>
-              <td class="px-6 py-3 text-indigo-600 font-mono text-xs">{{ log.action }}</td>
-              <td class="px-6 py-3 text-gray-700">{{ log.target_type }}</td>
-              <td class="px-6 py-3 text-gray-700 font-semibold">#{{ log.target_id }}</td>
-              <td class="px-6 py-3 text-gray-500 font-mono text-xs">{{ log.ip_address|default:"—" }}</td>
-              <td class="px-6 py-3 text-gray-500 text-xs font-mono max-w-xs truncate">{{ log.metadata }}</td>
+            <tr class="hover:bg-brand-greySubtle transition">
+              <td class="px-6 py-3 text-brand-navySubtext whitespace-nowrap">{{ log.created_at|date:"M d, H:i:s" }}</td>
+              <td class="px-6 py-3 font-medium text-brand-navy">{{ log.actor.username|default:"System" }}</td>
+              <td class="px-6 py-3 text-brand-blueDarkText font-mono text-xs">{{ log.action }}</td>
+              <td class="px-6 py-3 text-brand-navySubtext">{{ log.target_type }}</td>
+              <td class="px-6 py-3 text-brand-navy font-semibold">#{{ log.target_id }}</td>
+              <td class="px-6 py-3 text-brand-navySubtext font-mono text-xs">{{ log.ip_address|default:"—" }}</td>
+              <td class="px-6 py-3 text-brand-navySubtext text-xs font-mono max-w-xs truncate">{{ log.metadata }}</td>
             </tr>
           {% empty %}
-            <tr><td colspan="7" class="px-6 py-6 text-center text-gray-500">No audit logs recorded yet.</td></tr>
+            <tr><td colspan="7" class="px-6 py-6 text-center text-brand-navySubtext">No audit logs recorded yet.</td></tr>
           {% endfor %}
         </tbody>
       </table>

@@ -3,17 +3,17 @@
 {% block title %}Login — Campus Courier{% endblock %}
 
 {% block content %}
-<div class="max-w-md mx-auto my-8 bg-white p-8 rounded-lg shadow-sm border border-gray-200">
+<div class="max-w-md mx-auto my-8 bg-white p-8 rounded-lg shadow-sm border border-brand-grey">
   <div class="mb-6 text-center">
-    <h1 class="text-2xl font-bold text-gray-900">Sign In</h1>
-    <p class="mt-1 text-sm text-gray-500">Access your Campus Courier dashboard</p>
+    <h1 class="text-2xl font-bold text-brand-navy">Sign In</h1>
+    <p class="mt-1 text-sm text-brand-navySubtext">Access your Campus Courier dashboard</p>
   </div>
 
   <form method="post" action="{% url 'login' %}" class="space-y-4">
     {% csrf_token %}
     {% for field in form %}
       <div class="space-y-1">
-        <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">
+        <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-brand-navySubtext">
           {{ field.label }}
         </label>
         <div class="mt-1">
@@ -22,18 +22,18 @@
             name="{{ field.html_name }}"
             id="{{ field.id_for_label }}"
             {% if field.value %}value="{{ field.value }}"{% endif %}
-            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+            class="w-full px-3 py-2 border border-brand-grey rounded-md shadow-sm text-sm focus:outline-none focus:ring-1 focus:ring-brand-blueDark focus:border-brand-blueDark"
             {% if field.field.required %}required{% endif %}
           >
         </div>
         {% for error in field.errors %}
-          <p class="text-xs text-red-600 font-medium">{{ error }}</p>
+          <p class="text-xs text-brand-redDarkText font-medium">{{ error }}</p>
         {% endfor %}
       </div>
     {% endfor %}
 
     {% if form.non_field_errors %}
-      <div class="p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-600">
+      <div class="p-3 bg-brand-red/10 border border-brand-red/30 rounded-md text-sm text-brand-redDarkText">
         {% for error in form.non_field_errors %}
           <p>{{ error }}</p>
         {% endfor %}
@@ -41,15 +41,15 @@
     {% endif %}
 
     <div class="pt-2">
-      <button type="submit" class="w-full py-2.5 px-4 text-sm font-medium text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+      <button type="submit" class="w-full min-h-touch py-2.5 px-4 text-sm font-semibold text-brand-navy bg-brand-green rounded-md shadow-sm hover:bg-brand-greenDark focus:outline-none focus:ring-2 focus:ring-brand-blueDark transition inline-flex items-center justify-center">
         Sign In
       </button>
     </div>
   </form>
 
-  <div class="mt-6 text-center text-sm text-gray-500">
+  <div class="mt-6 text-center text-sm text-brand-navySubtext">
     Don't have an account yet?
-    <a href="{% url 'register' %}" class="font-medium text-indigo-600 hover:text-indigo-500">Register here</a>
+    <a href="{% url 'register' %}" class="font-medium text-brand-blueDarkText hover:text-brand-blueDark">Register here</a>
   </div>
 </div>
 {% endblock %}

@@ -13,19 +13,19 @@
 
 {% block content %}
 <div id="order-status-root" data-order-id="{{ order.id }}" class="max-w-3xl mx-auto space-y-6">
-  <div class="flex items-center justify-between border-b border-gray-200 pb-4">
+  <div class="flex items-center justify-between border-b border-brand-grey pb-4">
     <div class="flex items-center space-x-3">
-      <a href="{% url 'order_list' %}" class="text-gray-500 hover:text-gray-800 text-sm font-medium">&larr; Back to Orders</a>
-      <span class="text-gray-300">|</span>
-      <h1 class="text-2xl font-bold text-gray-900">Order #{{ order.id }}</h1>
+      <a href="{% url 'order_list' %}" class="text-brand-navySubtext hover:text-brand-navy text-sm font-medium">&larr; Back to Orders</a>
+      <span class="text-brand-greyDark">|</span>
+      <h1 class="text-2xl font-bold text-brand-navy">Order #{{ order.id }}</h1>
     </div>
     <div>
       <span id="status-badge" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
-        {% if order.status == 'PENDING' %}bg-amber-100 text-amber-800
-        {% elif order.status == 'ACCEPTED' %}bg-blue-100 text-blue-800
-        {% elif order.status == 'PICKED_UP' %}bg-indigo-100 text-indigo-800
-        {% elif order.status == 'DELIVERED' %}bg-emerald-100 text-emerald-800
-        {% elif order.status == 'CANCELLED' %}bg-red-100 text-red-800
+        {% if order.status == 'PENDING' %}bg-brand-yellow/20 text-brand-yellowDark
+        {% elif order.status == 'ACCEPTED' %}bg-brand-blue/20 text-brand-blueDarkText
+        {% elif order.status == 'PICKED_UP' %}bg-brand-purple/15 text-brand-purple
+        {% elif order.status == 'DELIVERED' %}bg-brand-green/20 text-brand-greenDarkText
+        {% elif order.status == 'CANCELLED' %}bg-brand-red/15 text-brand-redDarkText
         {% endif %}">
         {{ order.get_status_display }}
       </span>
@@ -33,42 +33,42 @@
   </div>
 
   <!-- Status Timeline -->
-  <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-    <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4">Delivery Progression</h2>
+  <div class="bg-white p-6 rounded-lg shadow-sm border border-brand-grey">
+    <h2 class="text-xs font-semibold uppercase tracking-wider text-brand-navySubtext mb-4">Delivery Progression</h2>
     <div id="status-timeline">
       {% if order.status == 'CANCELLED' %}
-        <div class="p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-700 font-medium">
+        <div class="p-3 bg-brand-red/10 border border-brand-red/30 rounded-md text-sm text-brand-redDarkText font-medium">
           This order has been cancelled.
         </div>
       {% else %}
         <div class="flex items-center justify-between relative">
           <div class="w-full flex justify-between items-center text-xs font-medium">
             <div class="flex flex-col items-center">
-              <span id="timeline-step-1" class="w-8 h-8 rounded-full flex items-center justify-center {% if order.status in 'PENDING ACCEPTED PICKED_UP DELIVERED' %}bg-indigo-600 text-white{% else %}bg-gray-200 text-gray-600{% endif %}">
+              <span id="timeline-step-1" class="w-8 h-8 rounded-full flex items-center justify-center {% if order.status in 'PENDING ACCEPTED PICKED_UP DELIVERED' %}bg-brand-green text-brand-navy font-semibold{% else %}bg-brand-grey text-brand-navySubtext{% endif %}">
                 1
               </span>
-              <span class="mt-2 text-gray-800 font-semibold">Pending</span>
+              <span class="mt-2 text-brand-navy font-semibold">Pending</span>
             </div>
-            <div id="timeline-line-1" class="flex-1 h-1 mx-2 {% if order.status in 'ACCEPTED PICKED_UP DELIVERED' %}bg-indigo-600{% else %}bg-gray-200{% endif %}"></div>
+            <div id="timeline-line-1" class="flex-1 h-1 mx-2 {% if order.status in 'ACCEPTED PICKED_UP DELIVERED' %}bg-brand-green{% else %}bg-brand-grey{% endif %}"></div>
             <div class="flex flex-col items-center">
-              <span id="timeline-step-2" class="w-8 h-8 rounded-full flex items-center justify-center {% if order.status in 'ACCEPTED PICKED_UP DELIVERED' %}bg-indigo-600 text-white{% else %}bg-gray-200 text-gray-600{% endif %}">
+              <span id="timeline-step-2" class="w-8 h-8 rounded-full flex items-center justify-center {% if order.status in 'ACCEPTED PICKED_UP DELIVERED' %}bg-brand-green text-brand-navy font-semibold{% else %}bg-brand-grey text-brand-navySubtext{% endif %}">
                 2
               </span>
-              <span class="mt-2 text-gray-800 font-semibold">Accepted</span>
+              <span class="mt-2 text-brand-navy font-semibold">Accepted</span>
             </div>
-            <div id="timeline-line-2" class="flex-1 h-1 mx-2 {% if order.status in 'PICKED_UP DELIVERED' %}bg-indigo-600{% else %}bg-gray-200{% endif %}"></div>
+            <div id="timeline-line-2" class="flex-1 h-1 mx-2 {% if order.status in 'PICKED_UP DELIVERED' %}bg-brand-green{% else %}bg-brand-grey{% endif %}"></div>
             <div class="flex flex-col items-center">
-              <span id="timeline-step-3" class="w-8 h-8 rounded-full flex items-center justify-center {% if order.status in 'PICKED_UP DELIVERED' %}bg-indigo-600 text-white{% else %}bg-gray-200 text-gray-600{% endif %}">
+              <span id="timeline-step-3" class="w-8 h-8 rounded-full flex items-center justify-center {% if order.status in 'PICKED_UP DELIVERED' %}bg-brand-green text-brand-navy font-semibold{% else %}bg-brand-grey text-brand-navySubtext{% endif %}">
                 3
               </span>
-              <span class="mt-2 text-gray-800 font-semibold">Picked Up</span>
+              <span class="mt-2 text-brand-navy font-semibold">Picked Up</span>
             </div>
-            <div id="timeline-line-3" class="flex-1 h-1 mx-2 {% if order.status == 'DELIVERED' %}bg-indigo-600{% else %}bg-gray-200{% endif %}"></div>
+            <div id="timeline-line-3" class="flex-1 h-1 mx-2 {% if order.status == 'DELIVERED' %}bg-brand-green{% else %}bg-brand-grey{% endif %}"></div>
             <div class="flex flex-col items-center">
-              <span id="timeline-step-4" class="w-8 h-8 rounded-full flex items-center justify-center {% if order.status == 'DELIVERED' %}bg-emerald-600 text-white{% else %}bg-gray-200 text-gray-600{% endif %}">
+              <span id="timeline-step-4" class="w-8 h-8 rounded-full flex items-center justify-center {% if order.status == 'DELIVERED' %}bg-brand-green text-brand-navy font-semibold{% else %}bg-brand-grey text-brand-navySubtext{% endif %}">
                 4
               </span>
-              <span class="mt-2 text-gray-800 font-semibold">Delivered</span>
+              <span class="mt-2 text-brand-navy font-semibold">Delivered</span>
             </div>
           </div>
         </div>
@@ -77,48 +77,48 @@
   </div>
 
   <!-- Order Details Card -->
-  <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 space-y-6">
+  <div class="bg-white p-6 rounded-lg shadow-sm border border-brand-grey space-y-6">
     <!-- Map Container -->
-    <div class="static-map w-full h-64 rounded-md border border-gray-200" style="z-index: 1;"
+    <div id="detail-map" class="static-map w-full h-[260px] md:h-[320px] rounded-lg border border-brand-grey" style="z-index: 1;"
          data-pickup="{{ order.pickup_lat }},{{ order.pickup_lon }}"
          data-dropoff="{{ order.dropoff_lat }},{{ order.dropoff_lon }}">
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="space-y-3">
-        <h3 class="text-sm font-semibold uppercase tracking-wider text-gray-500">Route & Distance</h3>
-        <div class="p-4 bg-gray-50 rounded-md border border-gray-100 space-y-2 text-sm">
+        <h3 class="text-sm font-semibold uppercase tracking-wider text-brand-navySubtext">Route & Distance</h3>
+        <div class="p-4 bg-brand-greySubtle rounded-md border border-brand-greyLight space-y-2 text-sm">
           <div>
-            <span class="text-gray-500 block text-xs">Pickup:</span>
-            <span class="font-medium text-gray-800">{{ order.pickup_label|default:"Campus" }}</span>
-            <span class="text-xs text-gray-400 block font-mono">({{ order.pickup_lat }}, {{ order.pickup_lon }})</span>
+            <span class="text-brand-navySubtext block text-xs">Pickup:</span>
+            <span class="font-medium text-brand-navy">{{ order.pickup_label|default:"Campus" }}</span>
+            <span class="text-xs text-brand-greyDark block font-mono">({{ order.pickup_lat }}, {{ order.pickup_lon }})</span>
           </div>
-          <div class="pt-2 border-t border-gray-200">
-            <span class="text-gray-500 block text-xs">Dropoff:</span>
-            <span class="font-medium text-gray-800">{{ order.dropoff_label|default:"Campus" }}</span>
-            <span class="text-xs text-gray-400 block font-mono">({{ order.dropoff_lat }}, {{ order.dropoff_lon }})</span>
+          <div class="pt-2 border-t border-brand-grey">
+            <span class="text-brand-navySubtext block text-xs">Dropoff:</span>
+            <span class="font-medium text-brand-navy">{{ order.dropoff_label|default:"Campus" }}</span>
+            <span class="text-xs text-brand-greyDark block font-mono">({{ order.dropoff_lat }}, {{ order.dropoff_lon }})</span>
           </div>
-          <div class="pt-2 border-t border-gray-200 flex justify-between">
-            <span class="text-gray-500">Calculated Distance:</span>
-            <span class="font-semibold text-indigo-600">{{ order.distance_km }} km</span>
+          <div class="pt-2 border-t border-brand-grey flex justify-between">
+            <span class="text-brand-navySubtext">Calculated Distance:</span>
+            <span class="font-semibold text-brand-navy">{{ order.distance_km }} km</span>
           </div>
         </div>
       </div>
 
       <div class="space-y-3">
-        <h3 class="text-sm font-semibold uppercase tracking-wider text-gray-500">Package Details</h3>
-        <div class="p-4 bg-gray-50 rounded-md border border-gray-100 space-y-2 text-sm">
+        <h3 class="text-sm font-semibold uppercase tracking-wider text-brand-navySubtext">Package Details</h3>
+        <div class="p-4 bg-brand-greySubtle rounded-md border border-brand-greyLight space-y-2 text-sm">
           <div class="flex justify-between">
-            <span class="text-gray-500">Item Type:</span>
-            <span class="font-medium text-gray-800">{{ order.get_item_type_display }}</span>
+            <span class="text-brand-navySubtext">Item Type:</span>
+            <span class="font-medium text-brand-navy">{{ order.get_item_type_display }}</span>
           </div>
           <div class="flex justify-between">
-            <span class="text-gray-500">Weight:</span>
-            <span class="font-medium text-gray-800">{{ order.weight_kg }} kg</span>
+            <span class="text-brand-navySubtext">Weight:</span>
+            <span class="font-medium text-brand-navy">{{ order.weight_kg }} kg</span>
           </div>
           <div class="flex justify-between">
-            <span class="text-gray-500">Estimated Fare:</span>
-            <span class="font-medium text-gray-800">
+            <span class="text-brand-navySubtext">Estimated Fare:</span>
+            <span class="font-medium text-brand-navy">
               {% if order.predicted_fare > 0 %}
                 {{ order.predicted_fare }} PKR
               {% else %}
@@ -127,63 +127,63 @@
             </span>
           </div>
           <div class="flex justify-between">
-            <span class="text-gray-500">Sender:</span>
-            <span class="font-medium text-gray-800">{{ order.sender.username }}</span>
+            <span class="text-brand-navySubtext">Sender:</span>
+            <span class="font-medium text-brand-navy">{{ order.sender.username }}</span>
           </div>
           <div class="flex justify-between">
-            <span class="text-gray-500">Assigned Courier:</span>
-            <span class="font-medium text-gray-800">{{ order.courier.username|default:"Unassigned" }}</span>
+            <span class="text-brand-navySubtext">Assigned Courier:</span>
+            <span class="font-medium text-brand-navy">{{ order.courier.username|default:"Unassigned" }}</span>
           </div>
-          <div class="pt-2 border-t border-gray-200">
-            <span class="text-gray-500 block text-xs">Notes:</span>
-            <span class="text-gray-700 text-xs italic">{{ order.notes|default:"No special instructions provided." }}</span>
+          <div class="pt-2 border-t border-brand-grey">
+            <span class="text-brand-navySubtext block text-xs">Notes:</span>
+            <span class="text-brand-navySubtext text-xs italic">{{ order.notes|default:"No special instructions provided." }}</span>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Contact Info -->
-    <div class="bg-gray-50 rounded p-4 border border-gray-200">
+    <div class="bg-brand-greySubtle rounded-md p-4 border border-brand-grey">
       {% if request.user == order.sender %}
         <div class="flex items-center justify-between mb-2">
-          <h3 class="text-sm font-semibold uppercase tracking-wider text-gray-500">Courier Contact</h3>
+          <h3 class="text-sm font-semibold uppercase tracking-wider text-brand-navySubtext">Courier Contact</h3>
           {% if order.status == 'ACCEPTED' or order.status == 'PICKED_UP' or order.status == 'DELIVERED' %}
             <a href="https://www.google.com/maps/dir/?api=1&destination={{ order.dropoff_lat }},{{ order.dropoff_lon }}&travelmode=driving"
                target="_blank" rel="noopener"
-               class="text-xs font-medium text-blue-600 hover:text-blue-800 hover:underline inline-flex items-center gap-1">
+               class="text-xs font-medium text-brand-blueDarkText hover:text-brand-blueDark hover:underline inline-flex items-center gap-1">
                Track on Google Maps
             </a>
           {% endif %}
         </div>
         {% if not order.courier %}
-          <p class="text-sm text-gray-700">No courier assigned yet.</p>
+          <p class="text-sm text-brand-navySubtext">No courier assigned yet.</p>
         {% elif order.contact_visible %}
-          <div class="text-sm text-gray-800 space-y-1">
-            <p>Phone: <a href="tel:{{ order.courier.profile.phone }}" class="text-indigo-600 hover:underline">{{ order.courier.profile.phone }}</a></p>
-            <p>Email: <a href="mailto:{{ order.courier.email }}" class="text-indigo-600 hover:underline">{{ order.courier.email }}</a></p>
+          <div class="text-sm text-brand-navy space-y-1">
+            <p>Phone: <a href="tel:{{ order.courier.profile.phone }}" class="text-brand-blueDarkText hover:underline">{{ order.courier.profile.phone }}</a></p>
+            <p>Email: <a href="mailto:{{ order.courier.email }}" class="text-brand-blueDarkText hover:underline">{{ order.courier.email }}</a></p>
           </div>
         {% else %}
-          <p class="text-sm text-gray-700">Hidden until accepted</p>
+          <p class="text-sm text-brand-navySubtext">Hidden until accepted</p>
         {% endif %}
       {% elif request.user == order.courier %}
-        <h3 class="text-sm font-semibold uppercase tracking-wider text-gray-500 mb-2">Sender Contact</h3>
+        <h3 class="text-sm font-semibold uppercase tracking-wider text-brand-navySubtext mb-2">Sender Contact</h3>
         {% if order.contact_visible %}
-          <div class="text-sm text-gray-800 space-y-1">
-            <p>Phone: <a href="tel:{{ order.sender.profile.phone }}" class="text-indigo-600 hover:underline">{{ order.sender.profile.phone }}</a></p>
-            <p>Email: <a href="mailto:{{ order.sender.email }}" class="text-indigo-600 hover:underline">{{ order.sender.email }}</a></p>
+          <div class="text-sm text-brand-navy space-y-1">
+            <p>Phone: <a href="tel:{{ order.sender.profile.phone }}" class="text-brand-blueDarkText hover:underline">{{ order.sender.profile.phone }}</a></p>
+            <p>Email: <a href="mailto:{{ order.sender.email }}" class="text-brand-blueDarkText hover:underline">{{ order.sender.email }}</a></p>
           </div>
         {% else %}
-          <p class="text-sm text-gray-700">Hidden until accepted</p>
+          <p class="text-sm text-brand-navySubtext">Hidden until accepted</p>
         {% endif %}
       {% endif %}
     </div>
 
     <!-- Actions (Sender cancel & Courier actions) -->
-    <div class="pt-4 border-t border-gray-100 flex flex-wrap justify-end gap-3">
+    <div class="pt-4 border-t border-brand-greyLight flex flex-col md:flex-row justify-end gap-3">
       {% if request.user == order.sender and order.status in 'PENDING ACCEPTED' %}
-        <form method="post" action="{% url 'order_cancel' order.id %}">
+        <form method="post" action="{% url 'order_cancel' order.id %}" class="w-full md:w-auto">
           {% csrf_token %}
-          <button type="submit" onclick="return confirm('Are you sure you want to cancel this order?');" class="js-loading-btn px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition">
+          <button type="submit" onclick="return confirm('Are you sure you want to cancel this order?');" class="js-loading-btn w-full md:w-auto min-h-touch px-4 py-2 text-sm font-semibold text-white bg-brand-red rounded-md hover:bg-brand-redDark transition inline-flex items-center justify-center">
             Cancel Order
           </button>
         </form>
@@ -192,24 +192,24 @@
       {% if request.user == order.courier and order.status == 'ACCEPTED' or request.user == order.courier and order.status == 'PICKED_UP' %}
         <a href="https://www.google.com/maps/dir/?api=1&destination={{ order.dropoff_lat }},{{ order.dropoff_lon }}&travelmode=driving"
            target="_blank" rel="noopener"
-           class="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700 transition">
+           class="w-full md:w-auto min-h-touch inline-flex items-center justify-center gap-1 px-4 py-2 text-sm font-medium rounded-md bg-brand-blueDark text-white hover:bg-brand-blueDarkText transition">
            Navigate to Dropoff
         </a>
       {% endif %}
 
       {% if request.user == order.courier and order.status == 'ACCEPTED' %}
-        <form method="post" action="{% url 'courier_pickup' order.id %}">
+        <form method="post" action="{% url 'courier_pickup' order.id %}" class="w-full md:w-auto">
           {% csrf_token %}
-          <button type="submit" class="js-loading-btn px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition">
+          <button type="submit" class="js-loading-btn w-full md:w-auto min-h-touch px-4 py-2 text-sm font-semibold text-brand-navy bg-brand-green rounded-md hover:bg-brand-greenDark transition inline-flex items-center justify-center">
             Mark Picked Up
           </button>
         </form>
       {% endif %}
 
       {% if request.user == order.courier and order.status == 'PICKED_UP' %}
-        <form method="post" action="{% url 'courier_deliver' order.id %}">
+        <form method="post" action="{% url 'courier_deliver' order.id %}" class="w-full md:w-auto">
           {% csrf_token %}
-          <button type="submit" class="js-loading-btn px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-md hover:bg-emerald-700 transition">
+          <button type="submit" class="js-loading-btn w-full md:w-auto min-h-touch px-4 py-2 text-sm font-semibold text-brand-navy bg-brand-green rounded-md hover:bg-brand-greenDark transition inline-flex items-center justify-center">
             Mark Delivered
           </button>
         </form>

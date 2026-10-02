@@ -39,12 +39,12 @@ export function initOrderMap(opts) {
 
       const btnSat = document.createElement('button');
       btnSat.textContent = 'Satellite';
-      btnSat.className = 'px-2 py-1 text-xs font-medium rounded bg-blue-600 text-white shadow-sm focus:outline-none';
+      btnSat.className = 'px-2 py-1 text-xs font-semibold rounded bg-brand-green text-brand-navy shadow-sm focus:outline-none';
       btnSat.type = 'button';
       
       const btnStr = document.createElement('button');
       btnStr.textContent = 'Streets';
-      btnStr.className = 'px-2 py-1 text-xs font-medium rounded bg-white text-gray-700 border border-gray-300 shadow-sm focus:outline-none hover:bg-gray-50';
+      btnStr.className = 'px-2 py-1 text-xs font-medium rounded bg-white text-brand-navySubtext border border-brand-grey shadow-sm focus:outline-none hover:bg-brand-greySubtle';
       btnStr.type = 'button';
 
       toggleDiv.appendChild(btnSat);
@@ -65,8 +65,8 @@ export function initOrderMap(opts) {
           map.addLayer(satelliteBase);
           map.addLayer(satelliteLabels);
           map.removeLayer(streetsLayer);
-          btnSat.className = 'px-2 py-1 text-xs font-medium rounded bg-blue-600 text-white shadow-sm focus:outline-none';
-          btnStr.className = 'px-2 py-1 text-xs font-medium rounded bg-white text-gray-700 border border-gray-300 shadow-sm focus:outline-none hover:bg-gray-50';
+          btnSat.className = 'px-2 py-1 text-xs font-semibold rounded bg-brand-green text-brand-navy shadow-sm focus:outline-none';
+          btnStr.className = 'px-2 py-1 text-xs font-medium rounded bg-white text-brand-navySubtext border border-brand-grey shadow-sm focus:outline-none hover:bg-brand-greySubtle';
       });
 
       btnStr.addEventListener('click', (e) => {
@@ -74,12 +74,13 @@ export function initOrderMap(opts) {
           map.removeLayer(satelliteBase);
           map.removeLayer(satelliteLabels);
           map.addLayer(streetsLayer);
-          btnStr.className = 'px-2 py-1 text-xs font-medium rounded bg-blue-600 text-white shadow-sm focus:outline-none';
-          btnSat.className = 'px-2 py-1 text-xs font-medium rounded bg-white text-gray-700 border border-gray-300 shadow-sm focus:outline-none hover:bg-gray-50';
+          btnStr.className = 'px-2 py-1 text-xs font-semibold rounded bg-brand-green text-brand-navy shadow-sm focus:outline-none';
+          btnSat.className = 'px-2 py-1 text-xs font-medium rounded bg-white text-brand-navySubtext border border-brand-grey shadow-sm focus:outline-none hover:bg-brand-greySubtle';
       });
 
       L.rectangle(bounds, {
-        color: '#4f46e5',
+        color: '#03EF62',
+        fillColor: '#03EF62',
         weight: 2,
         dashArray: '5, 5',
         fillOpacity: 0.05
@@ -141,9 +142,9 @@ export function initOrderMap(opts) {
       const updateButtonStates = () => {
         buttons.forEach(btn => {
           if (btn.dataset.mode === currentMode) {
-            btn.className = 'px-3 py-1.5 text-sm font-medium rounded-md bg-indigo-600 text-white shadow-sm hover:bg-indigo-700';
+            btn.className = 'px-3 py-1.5 text-sm font-semibold rounded-md bg-brand-green text-brand-navy shadow-sm hover:bg-brand-greenDark';
           } else {
-            btn.className = 'px-3 py-1.5 text-sm font-medium rounded-md bg-white border border-gray-300 text-gray-700 shadow-sm hover:bg-gray-50';
+            btn.className = 'px-3 py-1.5 text-sm font-medium rounded-md bg-white border border-brand-grey text-brand-navySubtext shadow-sm hover:bg-brand-greySubtle';
           }
         });
       };
@@ -167,8 +168,8 @@ export function initOrderMap(opts) {
             labelInput.value = data.label;
             labelInput.dataset.source = data.source;             // 'landmark' or 'coords'
             // small visual cue
-            labelInput.classList.remove('bg-yellow-50','bg-green-50');
-            labelInput.classList.add(data.source === 'landmark' ? 'bg-green-50' : 'bg-yellow-50');
+            labelInput.classList.remove('bg-brand-yellow/15', 'bg-brand-green/10', 'bg-yellow-50', 'bg-green-50');
+            labelInput.classList.add(data.source === 'landmark' ? 'bg-brand-green/10' : 'bg-brand-yellow/15');
           })
           .catch(() => {
             if (requestId !== state.lastGeocodeId) return;
@@ -271,18 +272,18 @@ export function initOrderMap(opts) {
             data.landmarks.forEach(lm => {
                 const marker = L.circleMarker([lm.lat, lm.lon], {
                     radius: 6,
-                    color: '#4f46e5',
-                    fillColor: '#4f46e5',
+                    color: '#00C74E',
+                    fillColor: '#03EF62',
                     fillOpacity: 0.6,
                     weight: 2
                 });
                 
                 const popupContent = document.createElement('div');
                 popupContent.className = 'p-1';
-                popupContent.innerHTML = `<p class="font-bold text-sm mb-2">${lm.name}</p>
+                popupContent.innerHTML = `<p class="font-bold text-sm text-brand-navy mb-2">${lm.name}</p>
                   <div class="flex space-x-2">
-                    <button class="set-pickup-btn px-2 py-1 bg-green-600 text-white rounded text-xs">Set as Pickup</button>
-                    <button class="set-dropoff-btn px-2 py-1 bg-red-600 text-white rounded text-xs">Set as Dropoff</button>
+                    <button class="set-pickup-btn px-2.5 py-1 bg-brand-green text-brand-navy font-semibold rounded text-xs shadow-sm hover:bg-brand-greenDark">Set as Pickup</button>
+                    <button class="set-dropoff-btn px-2.5 py-1 bg-brand-red text-white font-semibold rounded text-xs shadow-sm hover:bg-brand-redDark">Set as Dropoff</button>
                   </div>`;
                 
                 popupContent.querySelector('.set-pickup-btn').addEventListener('click', () => {

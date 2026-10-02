@@ -4,37 +4,37 @@
 <div class="space-y-8">
   <!-- KPI Cards -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-    <div class="bg-white p-5 rounded-lg border border-gray-200 shadow-sm">
-      <div class="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Orders</div>
-      <div class="mt-2 text-3xl font-bold text-gray-900">{{ total_orders|default:"0" }}</div>
-      <div class="mt-1 text-xs text-indigo-600">All-time campus dispatches</div>
+    <div class="bg-white p-5 rounded-lg border border-brand-grey shadow-sm">
+      <div class="text-xs font-medium text-brand-navySubtext uppercase tracking-wider">Total Orders</div>
+      <div class="mt-2 text-3xl font-bold text-brand-navy">{{ total_orders|default:"0" }}</div>
+      <div class="mt-1 text-xs text-brand-blueDarkText">All-time campus dispatches</div>
     </div>
-    <div class="bg-white p-5 rounded-lg border border-gray-200 shadow-sm">
-      <div class="text-xs font-medium text-gray-500 uppercase tracking-wider">Completed Deliveries</div>
-      <div class="mt-2 text-3xl font-bold text-emerald-600">{{ delivered_orders|default:"0" }}</div>
-      <div class="mt-1 text-xs text-gray-500">Delivered successfully</div>
+    <div class="bg-white p-5 rounded-lg border border-brand-grey shadow-sm">
+      <div class="text-xs font-medium text-brand-navySubtext uppercase tracking-wider">Completed Deliveries</div>
+      <div class="mt-2 text-3xl font-bold text-brand-greenDarkText">{{ delivered_orders|default:"0" }}</div>
+      <div class="mt-1 text-xs text-brand-navySubtext">Delivered successfully</div>
     </div>
-    <div class="bg-white p-5 rounded-lg border border-gray-200 shadow-sm">
-      <div class="text-xs font-medium text-gray-500 uppercase tracking-wider">Pending Orders</div>
-      <div class="mt-2 text-3xl font-bold text-amber-600">{{ pending_orders|default:"0" }}</div>
-      <div class="mt-1 text-xs text-gray-500">Awaiting courier pickup</div>
+    <div class="bg-white p-5 rounded-lg border border-brand-grey shadow-sm">
+      <div class="text-xs font-medium text-brand-navySubtext uppercase tracking-wider">Pending Orders</div>
+      <div class="mt-2 text-3xl font-bold text-brand-yellowDark">{{ pending_orders|default:"0" }}</div>
+      <div class="mt-1 text-xs text-brand-navySubtext">Awaiting courier pickup</div>
     </div>
-    <div class="bg-white p-5 rounded-lg border border-gray-200 shadow-sm">
-      <div class="text-xs font-medium text-gray-500 uppercase tracking-wider">Registered Couriers</div>
-      <div class="mt-2 text-3xl font-bold text-blue-600">{{ active_couriers|default:"0" }}</div>
-      <div class="mt-1 text-xs text-gray-500">{{ total_users|default:"0" }} total campus accounts</div>
+    <div class="bg-white p-5 rounded-lg border border-brand-grey shadow-sm">
+      <div class="text-xs font-medium text-brand-navySubtext uppercase tracking-wider">Registered Couriers</div>
+      <div class="mt-2 text-3xl font-bold text-brand-blueDarkText">{{ active_couriers|default:"0" }}</div>
+      <div class="mt-1 text-xs text-brand-navySubtext">{{ total_users|default:"0" }} total campus accounts</div>
     </div>
   </div>
 
   <!-- Recent Orders Table -->
-  <div class="bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden">
-    <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
-      <h2 class="text-sm font-semibold text-gray-900">Recent Campus Orders</h2>
-      <a href="{% url 'insights_orders' %}" class="text-xs font-medium text-indigo-600 hover:text-indigo-800">View all orders &rarr;</a>
+  <div class="bg-white shadow-sm border border-brand-grey rounded-lg overflow-hidden">
+    <div class="px-6 py-4 border-b border-brand-grey bg-brand-greySubtle flex items-center justify-between">
+      <h2 class="text-sm font-semibold text-brand-navy">Recent Campus Orders</h2>
+      <a href="{% url 'insights_orders' %}" class="text-xs font-medium text-brand-blueDarkText hover:text-brand-blueDark">View all orders &rarr;</a>
     </div>
     <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200 text-sm">
-        <thead class="bg-gray-50 text-gray-600 text-xs uppercase font-medium">
+      <table class="min-w-full divide-y divide-brand-grey text-sm">
+        <thead class="bg-brand-greySubtle text-brand-navySubtext text-xs uppercase font-medium">
           <tr>
             <th class="px-6 py-3 text-left">Order</th>
             <th class="px-6 py-3 text-left">Sender</th>
@@ -45,28 +45,28 @@
             <th class="px-6 py-3 text-left">Date</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-200">
+        <tbody class="divide-y divide-brand-grey">
           {% for o in recent_orders %}
-            <tr class="hover:bg-gray-50 transition">
-              <td class="px-6 py-3 font-semibold text-gray-900">#{{ o.id }}</td>
-              <td class="px-6 py-3 text-gray-700">{{ o.sender.username }}</td>
-              <td class="px-6 py-3 text-gray-700">{{ o.courier.username|default:"—" }}</td>
-              <td class="px-6 py-3 text-gray-700">{{ o.get_item_type_display }}</td>
+            <tr class="hover:bg-brand-greySubtle transition">
+              <td class="px-6 py-3 font-semibold text-brand-navy">#{{ o.id }}</td>
+              <td class="px-6 py-3 text-brand-navySubtext">{{ o.sender.username }}</td>
+              <td class="px-6 py-3 text-brand-navySubtext">{{ o.courier.username|default:"—" }}</td>
+              <td class="px-6 py-3 text-brand-navySubtext">{{ o.get_item_type_display }}</td>
               <td class="px-6 py-3">
                 <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold
-                  {% if o.status == 'DELIVERED' %}bg-emerald-100 text-emerald-800
-                  {% elif o.status == 'PENDING' %}bg-amber-100 text-amber-800
-                  {% elif o.status == 'ACCEPTED' %}bg-blue-100 text-blue-800
-                  {% elif o.status == 'PICKED_UP' %}bg-indigo-100 text-indigo-800
-                  {% else %}bg-gray-100 text-gray-800{% endif %}">
+                  {% if o.status == 'DELIVERED' %}bg-brand-green/20 text-brand-greenDarkText
+                  {% elif o.status == 'PENDING' %}bg-brand-yellow/20 text-brand-yellowDark
+                  {% elif o.status == 'ACCEPTED' %}bg-brand-blue/20 text-brand-blueDarkText
+                  {% elif o.status == 'PICKED_UP' %}bg-brand-purple/15 text-brand-purple
+                  {% else %}bg-brand-greyLight text-brand-navy{% endif %}">
                   {{ o.get_status_display }}
                 </span>
               </td>
-              <td class="px-6 py-3 text-gray-700">PKR {{ o.predicted_fare|default:"0" }}</td>
-              <td class="px-6 py-3 text-gray-500 whitespace-nowrap">{{ o.created_at|date:"M d, H:i" }}</td>
+              <td class="px-6 py-3 text-brand-navySubtext">PKR {{ o.predicted_fare|default:"0" }}</td>
+              <td class="px-6 py-3 text-brand-navySubtext whitespace-nowrap">{{ o.created_at|date:"M d, H:i" }}</td>
             </tr>
           {% empty %}
-            <tr><td colspan="7" class="px-6 py-4 text-center text-gray-500">No orders recorded yet.</td></tr>
+            <tr><td colspan="7" class="px-6 py-4 text-center text-brand-navySubtext">No orders recorded yet.</td></tr>
           {% endfor %}
         </tbody>
       </table>
@@ -74,14 +74,14 @@
   </div>
 
   <!-- Recent Audit Logs -->
-  <div class="bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden">
-    <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
-      <h2 class="text-sm font-semibold text-gray-900">Recent Audit Logs</h2>
-      <a href="{% url 'insights_audit' %}" class="text-xs font-medium text-indigo-600 hover:text-indigo-800">View all logs &rarr;</a>
+  <div class="bg-white shadow-sm border border-brand-grey rounded-lg overflow-hidden">
+    <div class="px-6 py-4 border-b border-brand-grey bg-brand-greySubtle flex items-center justify-between">
+      <h2 class="text-sm font-semibold text-brand-navy">Recent Audit Logs</h2>
+      <a href="{% url 'insights_audit' %}" class="text-xs font-medium text-brand-blueDarkText hover:text-brand-blueDark">View all logs &rarr;</a>
     </div>
     <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200 text-sm">
-        <thead class="bg-gray-50 text-gray-600 text-xs uppercase font-medium">
+      <table class="min-w-full divide-y divide-brand-grey text-sm">
+        <thead class="bg-brand-greySubtle text-brand-navySubtext text-xs uppercase font-medium">
           <tr>
             <th class="px-6 py-3 text-left">Timestamp</th>
             <th class="px-6 py-3 text-left">Actor</th>
@@ -90,17 +90,17 @@
             <th class="px-6 py-3 text-left">IP Address</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-200">
+        <tbody class="divide-y divide-brand-grey">
           {% for log in recent_audits %}
-            <tr class="hover:bg-gray-50 transition">
-              <td class="px-6 py-3 text-gray-500 whitespace-nowrap">{{ log.created_at|date:"M d, H:i:s" }}</td>
-              <td class="px-6 py-3 font-medium text-gray-900">{{ log.actor.username|default:"System" }}</td>
-              <td class="px-6 py-3 text-indigo-600 font-mono text-xs">{{ log.action }}</td>
-              <td class="px-6 py-3 text-gray-700">{{ log.target_type }} #{{ log.target_id }}</td>
-              <td class="px-6 py-3 text-gray-500 font-mono text-xs">{{ log.ip_address|default:"—" }}</td>
+            <tr class="hover:bg-brand-greySubtle transition">
+              <td class="px-6 py-3 text-brand-navySubtext whitespace-nowrap">{{ log.created_at|date:"M d, H:i:s" }}</td>
+              <td class="px-6 py-3 font-medium text-brand-navy">{{ log.actor.username|default:"System" }}</td>
+              <td class="px-6 py-3 text-brand-blueDarkText font-mono text-xs">{{ log.action }}</td>
+              <td class="px-6 py-3 text-brand-navySubtext">{{ log.target_type }} #{{ log.target_id }}</td>
+              <td class="px-6 py-3 text-brand-navySubtext font-mono text-xs">{{ log.ip_address|default:"—" }}</td>
             </tr>
           {% empty %}
-            <tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">No audit logs recorded yet.</td></tr>
+            <tr><td colspan="5" class="px-6 py-4 text-center text-brand-navySubtext">No audit logs recorded yet.</td></tr>
           {% endfor %}
         </tbody>
       </table>
