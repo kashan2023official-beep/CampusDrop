@@ -3,78 +3,135 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>{% block title %}Campus Courier{% endblock %}</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              green:          '#03EF62',
+              greenDark:      '#00C74E',
+              greenLight:     '#65FF8F',
+              greenDarkText:  '#008031',
+              navy:           '#05192D',
+              navyLight:      '#213147',
+              navyMedium:     '#13253A',
+              navySubtext:    '#5D6A77',
+              navySubtextAlt: '#9BA3AB',
+              grey:           '#E8E8EE',
+              greyLight:      '#EFEFF5',
+              greySubtle:     '#F7F7FC',
+              greyMedium:     '#E1E1E8',
+              greyDark:       '#848492',
+              greyDarkText:   '#595D78',
+              blue:           '#5EB1FF',
+              blueDark:       '#257DFE',
+              blueDarkText:   '#0065D1',
+              red:            '#FF5400',
+              redDark:        '#DD3400',
+              redDarkText:    '#C01100',
+              orange:         '#FF931E',
+              orangeDark:     '#D87300',
+              yellow:         '#FCCE0D',
+              yellowDark:     '#CFA600',
+              purple:         '#7933FF',
+              pink:           '#FF6EA9',
+              beige:          '#EFEBE4',
+              beigeSubtle:    '#FFFBF3',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
+          },
+          minHeight: {
+            'touch': '44px',
+          },
+          minWidth: {
+            'touch': '44px',
+          },
+        }
+      }
+    }
+  </script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   {% block head %}{% endblock %}
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col">
-  <nav class="bg-white shadow">
+<body class="bg-brand-greySubtle text-brand-navy min-h-screen flex flex-col font-sans">
+  <nav class="bg-white border-b border-brand-grey shadow-sm">
     <div class="max-w-5xl mx-auto px-4">
       <div class="flex justify-between h-16 items-center">
         <div class="flex items-center space-x-6">
-          <a href="{% url 'dashboard' %}" class="text-xl font-bold text-indigo-600 hover:text-indigo-700">
+          <a href="{% url 'dashboard' %}" class="text-xl font-semibold text-brand-navy hover:text-brand-greenDarkText transition">
             Campus Courier
           </a>
           {% if user.is_authenticated %}
-            {% if current_mode == 'sender' %}
-              <a href="{% url 'order_list' %}" class="text-sm font-medium text-gray-700 hover:text-indigo-600">
-                My Orders
-              </a>
-              <a href="{% url 'order_create' %}" class="text-sm font-medium text-gray-700 hover:text-indigo-600">
-                New Order
-              </a>
-            {% elif current_mode == 'courier' %}
-              <a href="{% url 'courier_available' %}" class="text-sm font-medium text-gray-700 hover:text-indigo-600">
-                Available Orders
-              </a>
-              <a href="{% url 'courier_jobs' %}" class="text-sm font-medium text-gray-700 hover:text-indigo-600">
-                My Jobs
-              </a>
-            {% endif %}
+            <div class="hidden md:flex items-center space-x-6">
+              {% if current_mode == 'sender' %}
+                <a href="{% url 'order_list' %}" class="text-sm font-medium text-brand-navySubtext hover:text-brand-blueDarkText transition">
+                  My Orders
+                </a>
+                <a href="{% url 'order_create' %}" class="text-sm font-medium text-brand-navySubtext hover:text-brand-blueDarkText transition">
+                  New Order
+                </a>
+              {% elif current_mode == 'courier' %}
+                <a href="{% url 'courier_available' %}" class="text-sm font-medium text-brand-navySubtext hover:text-brand-blueDarkText transition">
+                  Available Orders
+                </a>
+                <a href="{% url 'courier_jobs' %}" class="text-sm font-medium text-brand-navySubtext hover:text-brand-blueDarkText transition">
+                  My Jobs
+                </a>
+              {% endif %}
+            </div>
           {% endif %}
         </div>
-        <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-3">
           {% if user.is_authenticated %}
-            <div class="flex items-center space-x-3">
+            <div class="hidden md:flex items-center space-x-3">
               {% if current_mode == 'courier' %}
-                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-brand-green text-brand-navy">
                   Courier
                 </span>
               {% else %}
-                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-brand-greyLight text-brand-navy">
                   Sender
                 </span>
               {% endif %}
+            </div>
 
-              <form method="post" action="{% url 'toggle_role' %}" class="inline">
-                {% csrf_token %}
-                <input type="hidden" name="next" value="{{ request.path }}">
-                <button type="submit" class="js-loading-btn px-3 py-1.5 text-xs font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 transition">
-                  Switch to {% if current_mode == 'courier' %}Sender{% else %}Courier{% endif %}
-                </button>
-              </form>
+            <form method="post" action="{% url 'toggle_role' %}" class="inline">
+              {% csrf_token %}
+              <input type="hidden" name="next" value="{{ request.path }}">
+              <button type="submit" class="js-loading-btn px-3 py-1.5 text-xs font-medium text-brand-navy bg-brand-greyLight border border-brand-grey rounded-md hover:bg-brand-grey transition min-h-touch inline-flex items-center">
+                Switch to {% if current_mode == 'courier' %}Sender{% else %}Courier{% endif %}
+              </button>
+            </form>
 
-              <a href="{% url 'profile' %}" class="text-sm font-medium text-gray-700 hover:text-indigo-600">
+            <div class="hidden md:flex items-center space-x-3">
+              <a href="{% url 'profile' %}" class="text-sm font-medium text-brand-navySubtext hover:text-brand-blueDarkText transition">
                 Profile
               </a>
 
               <form method="post" action="{% url 'logout' %}" class="inline">
                 {% csrf_token %}
-                <button type="submit" class="js-loading-btn text-sm font-medium text-red-600 hover:text-red-800 transition">
+                <button type="submit" class="js-loading-btn text-sm font-medium text-brand-redDarkText hover:text-brand-redDark transition">
                   Logout
                 </button>
               </form>
             </div>
           {% else %}
             <div class="flex items-center space-x-4">
-              <a href="{% url 'login' %}" class="text-sm font-medium text-gray-700 hover:text-indigo-600">
+              <a href="{% url 'login' %}" class="text-sm font-medium text-brand-navySubtext hover:text-brand-blueDarkText transition">
                 Login
               </a>
-              <a href="{% url 'register' %}" class="px-3 py-1.5 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition">
+              <a href="{% url 'register' %}" class="px-3 py-1.5 text-sm font-semibold text-brand-navy bg-brand-green rounded-md hover:bg-brand-greenDark transition min-h-touch inline-flex items-center">
                 Register
               </a>
             </div>
@@ -84,11 +141,11 @@
     </div>
   </nav>
 
-  <main class="max-w-5xl mx-auto px-4 py-6 flex-1 w-full">
+  <main class="max-w-5xl mx-auto px-4 py-6 pb-24 md:pb-6 flex-1 w-full">
     {% if messages %}
       <div class="mb-6 space-y-2">
         {% for message in messages %}
-          <div class="p-4 rounded-md text-sm {% if message.tags == 'error' %}bg-red-50 text-red-700 border border-red-200{% elif message.tags == 'success' %}bg-green-50 text-green-700 border border-green-200{% else %}bg-blue-50 text-blue-700 border border-blue-200{% endif %}">
+          <div class="p-4 rounded-md text-sm {% if message.tags == 'error' %}bg-brand-red/10 text-brand-redDarkText border border-brand-red/30{% elif message.tags == 'success' %}bg-brand-green/10 text-brand-greenDarkText border border-brand-green/30{% else %}bg-brand-blue/10 text-brand-blueDarkText border border-brand-blue/30{% endif %}">
             {{ message }}
           </div>
         {% endfor %}
@@ -98,11 +155,70 @@
     {% block content %}{% endblock %}
   </main>
 
-  <footer class="bg-white border-t border-gray-200 py-4 mt-auto">
-    <div class="max-w-5xl mx-auto px-4 text-center text-xs text-gray-500">
+  <footer class="bg-white border-t border-brand-grey py-4 mt-auto">
+    <div class="max-w-5xl mx-auto px-4 text-center text-xs text-brand-navySubtext">
       Campus Courier · UET Lahore · PKR
     </div>
   </footer>
+
+  {% if user.is_authenticated %}
+  <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-brand-grey md:hidden pb-[env(safe-area-inset-bottom)]">
+    <div class="grid grid-cols-4 h-16">
+      {# Home #}
+      <a href="{% url 'dashboard' %}"
+         class="flex flex-col items-center justify-center gap-0.5 text-xs {% if request.resolver_match.url_name == 'dashboard' %}text-brand-greenDarkText font-semibold{% else %}text-brand-navySubtext{% endif %}">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+        </svg>
+        <span>Home</span>
+      </a>
+      {# Sender: My Orders / Courier: Available #}
+      {% if current_mode == 'courier' %}
+      <a href="{% url 'courier_available' %}"
+         class="flex flex-col items-center justify-center gap-0.5 text-xs {% if request.resolver_match.url_name == 'courier_available' %}text-brand-greenDarkText font-semibold{% else %}text-brand-navySubtext{% endif %}">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+        </svg>
+        <span>Available</span>
+      </a>
+      {% else %}
+      <a href="{% url 'order_list' %}"
+         class="flex flex-col items-center justify-center gap-0.5 text-xs {% if request.resolver_match.url_name == 'order_list' %}text-brand-greenDarkText font-semibold{% else %}text-brand-navySubtext{% endif %}">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+        </svg>
+        <span>Orders</span>
+      </a>
+      {% endif %}
+      {# New / Jobs #}
+      {% if current_mode == 'courier' %}
+      <a href="{% url 'courier_jobs' %}"
+         class="flex flex-col items-center justify-center gap-0.5 text-xs {% if request.resolver_match.url_name == 'courier_jobs' %}text-brand-greenDarkText font-semibold{% else %}text-brand-navySubtext{% endif %}">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
+        </svg>
+        <span>Jobs</span>
+      </a>
+      {% else %}
+      <a href="{% url 'order_create' %}"
+         class="flex flex-col items-center justify-center gap-0.5 text-xs {% if request.resolver_match.url_name == 'order_create' %}text-brand-greenDarkText font-semibold{% else %}text-brand-navySubtext{% endif %}">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+        </svg>
+        <span>New</span>
+      </a>
+      {% endif %}
+      {# Profile #}
+      <a href="{% url 'profile' %}"
+         class="flex flex-col items-center justify-center gap-0.5 text-xs {% if request.resolver_match.url_name == 'profile' %}text-brand-greenDarkText font-semibold{% else %}text-brand-navySubtext{% endif %}">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+        </svg>
+        <span>Profile</span>
+      </a>
+    </div>
+  </nav>
+  {% endif %}
 
   {% block scripts %}{% endblock %}
   <script src="{% static 'js/spinner.js' %}"></script>

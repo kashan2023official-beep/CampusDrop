@@ -1,17 +1,17 @@
 function getBadgeClass(status) {
   switch (status) {
     case 'PENDING':
-      return 'bg-amber-100 text-amber-800';
+      return 'bg-brand-yellow/20 text-brand-yellowDark';
     case 'ACCEPTED':
-      return 'bg-blue-100 text-blue-800';
+      return 'bg-brand-blue/20 text-brand-blueDarkText';
     case 'PICKED_UP':
-      return 'bg-indigo-100 text-indigo-800';
+      return 'bg-brand-purple/15 text-brand-purple';
     case 'DELIVERED':
-      return 'bg-emerald-100 text-emerald-800';
+      return 'bg-brand-green/20 text-brand-greenDarkText';
     case 'CANCELLED':
-      return 'bg-red-100 text-red-800';
+      return 'bg-brand-red/15 text-brand-redDarkText';
     default:
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-brand-greyLight text-brand-navySubtext';
   }
 }
 
@@ -30,7 +30,7 @@ function updateOrderStatus(data) {
   if (timeline) {
     if (data.status === 'CANCELLED') {
       timeline.innerHTML = `
-        <div class="p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-700 font-medium">
+        <div class="p-3 bg-brand-red/10 border border-brand-red/30 rounded-md text-sm text-brand-redDarkText font-medium">
           This order has been cancelled.
         </div>
       `;
@@ -49,13 +49,13 @@ function updateOrderStatus(data) {
     const line2 = document.getElementById('timeline-line-2');
     const line3 = document.getElementById('timeline-line-3');
 
-    if (step1) step1.className = `w-8 h-8 rounded-full flex items-center justify-center ${currentIdx >= 0 ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-600'}`;
-    if (line1) line1.className = `flex-1 h-1 mx-2 ${currentIdx >= 1 ? 'bg-indigo-600' : 'bg-gray-200'}`;
-    if (step2) step2.className = `w-8 h-8 rounded-full flex items-center justify-center ${currentIdx >= 1 ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-600'}`;
-    if (line2) line2.className = `flex-1 h-1 mx-2 ${currentIdx >= 2 ? 'bg-indigo-600' : 'bg-gray-200'}`;
-    if (step3) step3.className = `w-8 h-8 rounded-full flex items-center justify-center ${currentIdx >= 2 ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-600'}`;
-    if (line3) line3.className = `flex-1 h-1 mx-2 ${currentIdx >= 3 ? 'bg-indigo-600' : 'bg-gray-200'}`;
-    if (step4) step4.className = `w-8 h-8 rounded-full flex items-center justify-center ${currentIdx >= 3 ? 'bg-emerald-600 text-white' : 'bg-gray-200 text-gray-600'}`;
+    if (step1) step1.className = `w-8 h-8 rounded-full flex items-center justify-center font-semibold text-xs ${currentIdx >= 0 ? 'bg-brand-green text-brand-navy' : 'bg-brand-grey text-brand-navySubtext'}`;
+    if (line1) line1.className = `flex-1 h-1 mx-2 ${currentIdx >= 1 ? 'bg-brand-green' : 'bg-brand-grey'}`;
+    if (step2) step2.className = `w-8 h-8 rounded-full flex items-center justify-center font-semibold text-xs ${currentIdx >= 1 ? 'bg-brand-green text-brand-navy' : 'bg-brand-grey text-brand-navySubtext'}`;
+    if (line2) line2.className = `flex-1 h-1 mx-2 ${currentIdx >= 2 ? 'bg-brand-green' : 'bg-brand-grey'}`;
+    if (step3) step3.className = `w-8 h-8 rounded-full flex items-center justify-center font-semibold text-xs ${currentIdx >= 2 ? 'bg-brand-green text-brand-navy' : 'bg-brand-grey text-brand-navySubtext'}`;
+    if (line3) line3.className = `flex-1 h-1 mx-2 ${currentIdx >= 3 ? 'bg-brand-green' : 'bg-brand-grey'}`;
+    if (step4) step4.className = `w-8 h-8 rounded-full flex items-center justify-center font-semibold text-xs ${currentIdx >= 3 ? 'bg-brand-green text-brand-navy' : 'bg-brand-grey text-brand-navySubtext'}`;
   }
 }
 
