@@ -3,7 +3,7 @@ from orders.utils import haversine
 
 CAMPUS_LANDMARKS = [
     # Main gates & administrative
-    { 'name': 'Gate 0', 'lat': 31.57976, 'lon': 74.35495, 'category': 'gate' },
+   # { 'name': 'Gate 0', 'lat': 31.57976, 'lon': 74.35495, 'category': 'gate' },
     { 'name': 'Gate 3', 'lat': 31.576839, 'lon': 74.356816, 'category': 'gate' },
     { 'name': 'Admin Block', 'lat': 31.577022, 'lon': 74.354821, 'category': 'administrative' },
     { 'name': 'VC Office', 'lat': 31.577301, 'lon': 74.355561, 'category': 'administrative' },
@@ -61,7 +61,7 @@ CAMPUS_LANDMARKS = [
     { 'name': 'Central Jamia Mosque', 'lat': 31.578587, 'lon': 74.354979, 'category': 'religious' },
     { 'name': 'Junaid Jamshed Stadium', 'lat': 31.581076, 'lon': 74.354987, 'category': 'sports' },
     { 'name': 'Sports Complex / Gymnasium', 'lat': 31.581051, 'lon': 74.352946, 'category': 'sports' },
-    { 'name': 'UET Grand Mosque', 'lat': 31.57850, 'lon': 74.35700, 'category': 'religious' },
+    { 'name': 'UET Grand Mosque', 'lat': 31.578437, 'lon': 74.355361, 'category': 'religious' },
 
     # Services
     { 'name': 'ATM', 'lat': 31.578719, 'lon': 74.356316, 'category': 'service' },
