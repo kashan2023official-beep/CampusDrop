@@ -5,7 +5,7 @@
 [![Scikit-Learn](https://img.shields.io/badge/scikit--learn-Ridge%20Regression-F7931E.svg?logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
 [![Leaflet](https://img.shields.io/badge/Leaflet-1.9.4-199900.svg?logo=leaflet&logoColor=white)](https://leafletjs.com/)
 [![Esri ArcGIS](https://img.shields.io/badge/Maps-Esri%20Satellite%20%2B%20Labels-007AC2.svg?logo=arcgis&logoColor=white)](https://www.esri.com/)
-[![Tests](https://img.shields.io/badge/Tests-20%2F20%20Passed-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/Tests-44%2F44%20Passed-brightgreen.svg)]()
 [![License](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
 
 A modern, hyperlocal peer-to-peer parcel dispatch and courier platform engineered specifically for university campuses. Designed and calibrated for the **University of Engineering and Technology (UET), Lahore Main Campus (Ghari Shahu)**.
@@ -30,6 +30,15 @@ Campus Courier empowers students and faculty to seamlessly dispatch documents, f
 ---
 
 ## 🚀 Key Features
+
+### 📍 Campus Landmarks & Map Visualization (Phase 11)
+- **45+ Curated Campus Landmarks**: Comprehensive catalog covering academic blocks, faculties, student service centers, cafeterias, hostels, gates, and sports facilities.
+- **Interactive Landmark Pins**: Visual `L.circleMarker` pins with instant hover tooltips and action popups to quickly "Set as Pickup" or "Set as Dropoff".
+- **Intelligent Auto-Fill with Reverse Geocoding**: Proximity-based auto-fill (150m threshold) with debounced user-override preservation and coordinate fallback.
+- **Dedicated Layer Switcher**: Integrated top-left toggle control to show or hide landmark pins on demand.
+
+### 🧭 Courier Navigation Deep Links
+- **One-Click Turn-by-Turn Routing**: Couriers on active delivery jobs can open Google Maps navigation deep links directly for both pickup and dropoff coordinates with zero API key dependencies.
 
 ### 🗺️ High-Resolution Esri Dual-Layer Mapping
 - **Stacked Esri ArcGIS Imagery**: Powered by Esri `World_Imagery` (high-res satellite) stacked with `World_Boundaries_and_Places` (vector street labels and place names).
@@ -132,9 +141,11 @@ CampusDrop/
     ├── orders/                              # Core parcel order lifecycle
     │   ├── models.py                        # Order entity & state transitions
     │   ├── forms.py                         # Geofenced order creation forms
+    │   ├── landmarks.py                     # 45+ campus landmarks & haversine lookup
     │   ├── services.py                      # Order placement & cancellation logic
     │   ├── utils.py                         # Haversine calculation & campus bounds
-    │   └── views.py                         # Order creation, details, list views
+    │   ├── views.py                         # Order creation, details, list views
+    │   └── tests/                           # Order and landmark unit tests
     ├── couriers/                            # Courier dispatch workflow
     │   ├── views.py                         # Available jobs board, claim, deliver
     │   └── urls.py                          # Courier workflow endpoints
@@ -277,12 +288,28 @@ All demo accounts share the password: **`DemoPass123!`**
   ```json
   {
     "center": [31.579761694261773, 74.35494969618985],
-    "bounds": {
-      "south": 31.5757,
-      "north": 31.5838,
-      "west": 74.3507,
-      "east": 74.3592
-    }
+    "bounds": [[31.575, 74.352], [31.583, 74.36]]
+  }
+  ```
+
+### 3. Campus Landmarks List
+- **Endpoint**: `GET /api/landmarks/`
+- **Response**:
+  ```json
+  {
+    "landmarks": [
+      { "name": "Main Library", "lat": 31.57811, "lon": 74.35502, "category": "academic" }
+    ]
+  }
+  ```
+
+### 4. Landmark Proximity & Reverse Geocoding
+- **Endpoint**: `GET /api/reverse-geocode/?lat=31.5790&lon=74.3560`
+- **Response**:
+  ```json
+  {
+    "label": "Computer Science Dept",
+    "source": "landmark"
   }
   ```
 
@@ -297,20 +324,25 @@ pytest -v
 ```
 
 ### Coverage Highlights:
-- **Authentication & Roles**: Profile signal generation, courier promotion, role decorators.
-- **Order Lifecycle**: Placement, state validation, cancellation rules, campus boundary bounds.
-- **Courier Operations**: Claim verification, race-condition handling, delivery completion.
+- **Authentication & Contact Details**: Profile generation, Pakistani phone verification (`03xxxxxxxxx`), email uniqueness, courier promotions, role decorators.
+- **Order Lifecycle & Contacts**: Order placements, status transitions, cancellation guards, conditional contact revelation (masked until ACCEPTED).
+- **Landmark Geocoding & Visualization**: Landmark list expansion (45+ items), 150m threshold lookup, coordinate fallbacks, authenticated JSON API endpoint.
+- **Courier Operations**: Available orders polling, race-condition handling with row-level locks, Google Maps navigation links, delivery confirmations.
 - **Machine Learning Predictor**: Feature vector alignment, monotonicity verification, peak hour surge, fallback accuracy.
 - **Insights & Audit**: Permissions gating for staff routes and audit log generation.
 
 ```text
-accounts/tests/test_auth.py .......                         [ 15% ]
-couriers/tests/test_accept.py .......                       [ 35% ]
-insights/tests/test_access.py .......                       [ 50% ]
-ml_engine/tests/test_predictor.py .......                   [ 70% ]
-orders/tests/test_order.py ..........                       [100% ]
+accounts/tests/test_auth.py .......                         [  7% ]
+accounts/tests/test_contact.py ..........                   [ 31% ]
+couriers/tests/test_accept.py .......                       [ 41% ]
+insights/tests/test_access.py .......                       [ 48% ]
+ml_engine/tests/test_predictor.py .......                   [ 51% ]
+orders/tests/test_landmarks.py .............                [ 63% ]
+orders/tests/test_order.py ..........                       [ 78% ]
+ml_engine/tests/test_predictor.py .......                   [ 85% ]
+orders/tests/test_landmarks.py .............                [100% ]
 
-============================= 20 passed in 20.88s =============================
+============================= 44 passed in 29.84s =============================
 ```
 
 ---

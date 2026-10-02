@@ -5,14 +5,15 @@ from django.core.exceptions import PermissionDenied, ValidationError
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_GET, require_POST
 from django.views.generic import CreateView, DetailView, ListView, TemplateView
 
 from core.audit import client_ip, log
 from .forms import OrderCreateForm
+from .landmarks import describe_location, landmarks_for_json
 from .models import Order
 from .services import transition
-from .utils import CAMPUS_BOUNDS, CAMPUS_CENTER, compute_distance
+from .utils import CAMPUS_BOUNDS, CAMPUS_CENTER, compute_distance, is_inside_campus
 from ml_engine.predictor import predict_fare
 
 
@@ -136,6 +137,11 @@ CampusBoundsView = campus_bounds_view
 
 
 @login_required
+def landmarks_json_view(request):
+    return JsonResponse({'landmarks': landmarks_for_json()})
+
+
+@login_required
 def distance_estimate_view(request):
     pickup_lat = request.GET.get('pickup_lat')
     pickup_lon = request.GET.get('pickup_lon')
@@ -153,3 +159,24 @@ def distance_estimate_view(request):
         return JsonResponse({'distance_km': distance_km})
     except (ValueError, TypeError):
         return JsonResponse({'error': 'Invalid coordinates'}, status=400)
+
+
+@login_required
+@require_GET
+def reverse_geocode_view(request):
+    lat_raw = request.GET.get('lat')
+    lon_raw = request.GET.get('lon')
+    if lat_raw is None or lon_raw is None:
+        return JsonResponse({"error": "invalid_params"}, status=400)
+    try:
+        lat = float(lat_raw)
+        lon = float(lon_raw)
+    except (ValueError, TypeError):
+        return JsonResponse({"error": "invalid_params"}, status=400)
+
+    if not is_inside_campus(lat, lon):
+        return JsonResponse({"error": "out_of_bounds"}, status=400)
+
+    label, source = describe_location(lat, lon)
+    return JsonResponse({"label": label, "source": source})
+

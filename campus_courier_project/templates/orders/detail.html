@@ -145,7 +145,16 @@
     <!-- Contact Info -->
     <div class="bg-gray-50 rounded p-4 border border-gray-200">
       {% if request.user == order.sender %}
-        <h3 class="text-sm font-semibold uppercase tracking-wider text-gray-500 mb-2">Courier Contact</h3>
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-sm font-semibold uppercase tracking-wider text-gray-500">Courier Contact</h3>
+          {% if order.status == 'ACCEPTED' or order.status == 'PICKED_UP' or order.status == 'DELIVERED' %}
+            <a href="https://www.google.com/maps/dir/?api=1&destination={{ order.dropoff_lat }},{{ order.dropoff_lon }}&travelmode=driving"
+               target="_blank" rel="noopener"
+               class="text-xs font-medium text-blue-600 hover:text-blue-800 hover:underline inline-flex items-center gap-1">
+               Track on Google Maps
+            </a>
+          {% endif %}
+        </div>
         {% if not order.courier %}
           <p class="text-sm text-gray-700">No courier assigned yet.</p>
         {% elif order.contact_visible %}
@@ -178,6 +187,14 @@
             Cancel Order
           </button>
         </form>
+      {% endif %}
+
+      {% if request.user == order.courier and order.status == 'ACCEPTED' or request.user == order.courier and order.status == 'PICKED_UP' %}
+        <a href="https://www.google.com/maps/dir/?api=1&destination={{ order.dropoff_lat }},{{ order.dropoff_lon }}&travelmode=driving"
+           target="_blank" rel="noopener"
+           class="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700 transition">
+           Navigate to Dropoff
+        </a>
       {% endif %}
 
       {% if request.user == order.courier and order.status == 'ACCEPTED' %}

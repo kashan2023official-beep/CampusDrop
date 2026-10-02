@@ -1,5 +1,8 @@
 
+const state = { lastGeocodeId: 0 };
+
 export function initOrderMap(opts) {
+
   fetch('/api/campus-bounds/')
     .then(r => r.json())
     .then(data => {
@@ -105,6 +108,32 @@ export function initOrderMap(opts) {
       let isPickupSet = false;
       let isDropoffSet = false;
 
+      const landmarkToggleDiv = L.DomUtil.create('div');
+      landmarkToggleDiv.className = 'leaflet-bar leaflet-control bg-white p-1';
+      
+      const btnLandmark = document.createElement('label');
+      btnLandmark.className = 'flex items-center space-x-1 text-xs cursor-pointer p-1';
+      btnLandmark.innerHTML = '<input type="checkbox" id="landmark-toggle" checked class="form-checkbox h-3 w-3 text-indigo-600 rounded"><span>Landmarks</span>';
+      landmarkToggleDiv.appendChild(btnLandmark);
+
+      const LandmarkControl = L.Control.extend({
+          options: { position: 'topleft' },
+          onAdd: function () {
+              return landmarkToggleDiv;
+          }
+      });
+      map.addControl(new LandmarkControl());
+      L.DomEvent.disableClickPropagation(landmarkToggleDiv);
+
+      const landmarkLayer = L.layerGroup().addTo(map);
+      document.getElementById('landmark-toggle').addEventListener('change', (e) => {
+          if (e.target.checked) {
+              map.addLayer(landmarkLayer);
+          } else {
+              map.removeLayer(landmarkLayer);
+          }
+      });
+
       let currentMode = 'pickup';
 
       const buttons = document.querySelectorAll(opts.modeButtonsSelector);
@@ -126,15 +155,29 @@ export function initOrderMap(opts) {
         });
       });
 
-      const simulateReverseGeocode = async (lat, lng) => {
-        return new Promise(resolve => {
-          setTimeout(() => {
-            resolve(`Location ${lat.toFixed(4)}, ${lng.toFixed(4)}`);
-          }, 200);
-        });
+      const reverseGeocode = (lat, lon, labelInput) => {
+        if (!labelInput) return;
+        const requestId = ++state.lastGeocodeId;
+        const url = `/api/reverse-geocode/?lat=${lat}&lon=${lon}`;
+        fetch(url, { credentials: 'same-origin' })
+          .then(r => r.ok ? r.json() : Promise.reject(r))
+          .then(data => {
+            if (requestId !== state.lastGeocodeId) return;      // discard stale
+            if (labelInput.dataset.userEdited === '1') return;   // respect user edit
+            labelInput.value = data.label;
+            labelInput.dataset.source = data.source;             // 'landmark' or 'coords'
+            // small visual cue
+            labelInput.classList.remove('bg-yellow-50','bg-green-50');
+            labelInput.classList.add(data.source === 'landmark' ? 'bg-green-50' : 'bg-yellow-50');
+          })
+          .catch(() => {
+            if (requestId !== state.lastGeocodeId) return;
+            if (labelInput.dataset.userEdited === '1') return;
+            labelInput.value = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+          });
       };
 
-      const updatePickup = async (lat, lng) => {
+      const updatePickup = (lat, lng) => {
         document.getElementById(opts.pickupLatId).value = lat;
         document.getElementById(opts.pickupLonId).value = lng;
         pickupMarker.setLatLng([lat, lng]);
@@ -142,11 +185,12 @@ export function initOrderMap(opts) {
           pickupMarker.addTo(map);
           isPickupSet = true;
         }
-        const label = await simulateReverseGeocode(lat, lng);
-        document.getElementById(opts.pickupLabelId).value = label;
+        const labelInput = document.getElementById(opts.pickupLabelId) || document.getElementById('pickup_label');
+        if (labelInput) labelInput.dataset.userEdited = '0';
+        reverseGeocode(lat, lng, labelInput);
       };
 
-      const updateDropoff = async (lat, lng) => {
+      const updateDropoff = (lat, lng) => {
         document.getElementById(opts.dropoffLatId).value = lat;
         document.getElementById(opts.dropoffLonId).value = lng;
         dropoffMarker.setLatLng([lat, lng]);
@@ -154,8 +198,9 @@ export function initOrderMap(opts) {
           dropoffMarker.addTo(map);
           isDropoffSet = true;
         }
-        const label = await simulateReverseGeocode(lat, lng);
-        document.getElementById(opts.dropoffLabelId).value = label;
+        const labelInput = document.getElementById(opts.dropoffLabelId) || document.getElementById('dropoff_label');
+        if (labelInput) labelInput.dataset.userEdited = '0';
+        reverseGeocode(lat, lng, labelInput);
       };
 
       map.on('click', (e) => {
@@ -179,8 +224,6 @@ export function initOrderMap(opts) {
         const leafletBounds = L.latLngBounds(bounds);
         if (!leafletBounds.contains(e.target.getLatLng())) {
           alert('Please stay within the campus boundaries.');
-          // reset to previous? We just update with whatever it is or reset to bounds center? 
-          // Simple for now: just update it, server will validate anyway. Or we can snap it.
         }
         updatePickup(lat, lng);
       });
@@ -196,14 +239,73 @@ export function initOrderMap(opts) {
       const initLat = document.getElementById(opts.pickupLatId).value;
       const initLon = document.getElementById(opts.pickupLonId).value;
       if (initLat && initLon) {
-          updatePickup(parseFloat(initLat), parseFloat(initLon));
+          pickupMarker.setLatLng([parseFloat(initLat), parseFloat(initLon)]);
+          if (!isPickupSet) {
+              pickupMarker.addTo(map);
+              isPickupSet = true;
+          }
+          const pLabel = document.getElementById(opts.pickupLabelId) || document.getElementById('pickup_label');
+          if (pLabel && !pLabel.value) {
+              reverseGeocode(parseFloat(initLat), parseFloat(initLon), pLabel);
+          }
       }
       
       const initDLat = document.getElementById(opts.dropoffLatId).value;
       const initDLon = document.getElementById(opts.dropoffLonId).value;
       if (initDLat && initDLon) {
-          updateDropoff(parseFloat(initDLat), parseFloat(initDLon));
+          dropoffMarker.setLatLng([parseFloat(initDLat), parseFloat(initDLon)]);
+          if (!isDropoffSet) {
+              dropoffMarker.addTo(map);
+              isDropoffSet = true;
+          }
+          const dLabel = document.getElementById(opts.dropoffLabelId) || document.getElementById('dropoff_label');
+          if (dLabel && !dLabel.value) {
+              reverseGeocode(parseFloat(initDLat), parseFloat(initDLon), dLabel);
+          }
       }
+
+      // fetch landmarks and add to landmarkLayer
+      fetch('/api/landmarks/')
+        .then(r => r.json())
+        .then(data => {
+            data.landmarks.forEach(lm => {
+                const marker = L.circleMarker([lm.lat, lm.lon], {
+                    radius: 6,
+                    color: '#4f46e5',
+                    fillColor: '#4f46e5',
+                    fillOpacity: 0.6,
+                    weight: 2
+                });
+                
+                const popupContent = document.createElement('div');
+                popupContent.className = 'p-1';
+                popupContent.innerHTML = `<p class="font-bold text-sm mb-2">${lm.name}</p>
+                  <div class="flex space-x-2">
+                    <button class="set-pickup-btn px-2 py-1 bg-green-600 text-white rounded text-xs">Set as Pickup</button>
+                    <button class="set-dropoff-btn px-2 py-1 bg-red-600 text-white rounded text-xs">Set as Dropoff</button>
+                  </div>`;
+                
+                popupContent.querySelector('.set-pickup-btn').addEventListener('click', () => {
+                    updatePickup(lm.lat, lm.lon);
+                    map.closePopup();
+                    if (window.DEBUG_MAP) console.log('Landmark set as pickup:', lm.name);
+                });
+                popupContent.querySelector('.set-dropoff-btn').addEventListener('click', () => {
+                    updateDropoff(lm.lat, lm.lon);
+                    map.closePopup();
+                    if (window.DEBUG_MAP) console.log('Landmark set as dropoff:', lm.name);
+                });
+
+                marker.bindPopup(popupContent);
+                marker.bindTooltip(lm.name, {
+                    direction: 'top',
+                    offset: [0, -6],
+                    opacity: 0.9,
+                    sticky: false,
+                });
+                landmarkLayer.addLayer(marker);
+            });
+        });
 
     });
 }

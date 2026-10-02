@@ -147,3 +147,53 @@ Each phase is independently runnable and testable. Do not start the next phase u
 - Two-browser demo works end to end
 - `pytest` passes
 - Someone else can clone + run following README
+
+---
+
+## Phase 8 — Contact Info & Conditional Reveal
+
+**Deliverable:** Mandatory Pakistani phone number and unique email; contact info conditionally revealed only once order is ACCEPTED.
+
+**Tasks**
+1. Pakistani phone validation (`^03\d{9}$`) and unique email requirement on signup and profile editing
+2. Mask contact details (`Hidden until accepted`) before an order is accepted
+3. Unmask tel: and mailto: links server-side only when status is ACCEPTED, PICKED_UP, or DELIVERED
+4. Staff-only insights users table with unmasked contact info
+
+---
+
+## Phase 9 — Landmark Auto-Fill & Google Navigation
+
+**Deliverable:** Auto-fill location labels using nearest campus landmark on map click, and provide Google Maps navigation links.
+
+**Tasks**
+1. In-memory `CAMPUS_LANDMARKS` with initial locations and category taxonomy
+2. Haversine proximity lookup (`find_nearest_landmark`, `describe_location`)
+3. Reverse geocoding endpoint `/api/reverse-geocode/`
+4. Free Google Maps navigation deep links on courier active jobs (`/courier/jobs/`)
+
+---
+
+## Phase 10 — Esri ArcGIS High-Res Mapping & Layer Switcher
+
+**Deliverable:** Dual-layer satellite imagery with stacked street labels and instant mode toggle.
+
+**Tasks**
+1. Layer Esri `World_Imagery` with Esri `World_Boundaries_and_Places`
+2. Esri `World_Street_Map` as street layer alternative
+3. Top-right layer toggle control between Satellite and Streets modes
+
+---
+
+## Phase 11 — Landmark Visualization & UX Polish
+
+**Deliverable:** Visual landmark pins on map, hover tooltips, click popups, layer toggle, and expanded landmarks list.
+
+**Tasks**
+1. Expand `CAMPUS_LANDMARKS` to 45+ locations across campus categories
+2. Increase proximity auto-fill radius to 150m for more forgiving map clicks
+3. `GET /api/landmarks/` endpoint returning all landmarks
+4. Render `L.circleMarker` pins with hover tooltips and action popups ("Set as Pickup" / "Set as Dropoff")
+5. Top-left "Landmarks" layer visibility toggle control
+6. Fix userEdited flag with debouncing so manual edits don't permanently disable map auto-fill
+

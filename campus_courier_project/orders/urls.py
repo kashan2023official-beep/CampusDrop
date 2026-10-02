@@ -9,5 +9,7 @@ urlpatterns = [
     path('orders/<int:pk>/cancel/', views.order_cancel_view, name='order_cancel'),
     path('api/order/<int:pk>/status/', views.order_status_json, name='order_status_json'),
     path('api/campus-bounds/', views.campus_bounds_view, name='campus_bounds'),
+    path('api/landmarks/', views.landmarks_json_view, name='landmarks_json'),
     path('api/estimate-distance/', views.distance_estimate_view, name='distance_estimate'),
+    path('api/reverse-geocode/', views.reverse_geocode_view, name='reverse_geocode'),
 ]

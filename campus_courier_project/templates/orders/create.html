@@ -47,12 +47,14 @@
         <div>
           <label for="{{ form.pickup_label.id_for_label }}" class="block text-sm font-medium text-gray-700">Pickup Location Label</label>
           <div class="mt-1">{{ form.pickup_label }}</div>
+          <p class="text-xs text-gray-500 mt-1">Auto-filled from nearby landmark. You can edit.</p>
           {% for error in form.pickup_label.errors %}<p class="text-xs text-red-600 mt-1">{{ error }}</p>{% endfor %}
           {% for error in form.pickup_lat.errors %}<p class="text-xs text-red-600 mt-1">{{ error }}</p>{% endfor %}
         </div>
         <div>
           <label for="{{ form.dropoff_label.id_for_label }}" class="block text-sm font-medium text-gray-700">Dropoff Location Label</label>
           <div class="mt-1">{{ form.dropoff_label }}</div>
+          <p class="text-xs text-gray-500 mt-1">Auto-filled from nearby landmark. You can edit.</p>
           {% for error in form.dropoff_label.errors %}<p class="text-xs text-red-600 mt-1">{{ error }}</p>{% endfor %}
           {% for error in form.dropoff_lat.errors %}<p class="text-xs text-red-600 mt-1">{{ error }}</p>{% endfor %}
         </div>
@@ -129,11 +131,25 @@
       mapElId: 'order-map',
       pickupLatId: 'id_pickup_lat',
       pickupLonId: 'id_pickup_lon',
-      pickupLabelId: 'id_pickup_label',
+      pickupLabelId: 'pickup_label',
       dropoffLatId: 'id_dropoff_lat',
       dropoffLonId: 'id_dropoff_lon',
-      dropoffLabelId: 'id_dropoff_label',
+      dropoffLabelId: 'dropoff_label',
       modeButtonsSelector: '#mode-buttons button'
+    });
+
+    let debounceTimers = {};
+    ['pickup_label', 'dropoff_label'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('input', function() {
+          clearTimeout(debounceTimers[id]);
+          debounceTimers[id] = setTimeout(() => {
+            this.dataset.userEdited = '1';
+          }, 300);
+          this.classList.remove('bg-yellow-50', 'bg-green-50');
+        });
+      }
     });
   });
 </script>

@@ -51,17 +51,28 @@ Structure:
 - Mode buttons: "Set Pickup", "Set Dropoff"
 - Form fields: weight_kg, item_type, notes, pickup_label, dropoff_label
 - Fare preview panel — calls `/api/predict-fare/` on change
-- Map restricted to campus bounds
+- Map restricted to campus bounds with boundary box
+- Interactive landmark pins (45+ `L.circleMarker`) fetched from `/api/landmarks/`
+- Landmark hover tooltips and interactive popups with "Set as Pickup" and "Set as Dropoff" buttons
+- "Landmarks" layer visibility checkbox control in top-left
+- Auto-fill reverse geocoding from `/api/reverse-geocode/` with debounced user-edited protection
+- Esri Satellite + Streets base layer switcher in top-right
 
 ### `couriers/available.html`
 - Polls `/courier/available/json/` every 5 s
 - Renders list of cards
 - Accept button per card → POST to `/courier/accept/<id>/`
 
+### `couriers/jobs.html`
+- Renders courier's assigned active jobs and completed history
+- Embedded static maps per job showing pickup and dropoff points
+- Direct Google Maps navigation deep links (`https://www.google.com/maps/dir/?api=1&destination=<lat>,<lon>&travelmode=driving`) for turn-by-turn navigation to Pickup and Dropoff locations
+- Action buttons for status progression (`Mark Picked Up`, `Mark Delivered`)
+
 ### `orders/detail.html`
 - Status timeline (PENDING → ACCEPTED → PICKED_UP → DELIVERED)
 - Map with pickup + dropoff markers + polyline
-- Courier info if assigned
+- Courier info if assigned (conditional contact reveal: phone & email revealed once ACCEPTED)
 - Sender sees "Cancel" if status is PENDING or ACCEPTED
 - Polls `/api/order/<id>/status/` every 5 s to refresh status
 

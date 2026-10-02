@@ -22,18 +22,18 @@ class OrderCreateForm(forms.ModelForm):
             'pickup_lon': forms.HiddenInput(),
             'pickup_label': forms.TextInput(
                 attrs={
-                    'class': 'w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-gray-50',
+                    'id': 'pickup_label',
+                    'class': 'w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500',
                     'placeholder': 'Select on map...',
-                    'readonly': 'readonly'
                 }
             ),
             'dropoff_lat': forms.HiddenInput(),
             'dropoff_lon': forms.HiddenInput(),
             'dropoff_label': forms.TextInput(
                 attrs={
-                    'class': 'w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-gray-50',
+                    'id': 'dropoff_label',
+                    'class': 'w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500',
                     'placeholder': 'Select on map...',
-                    'readonly': 'readonly'
                 }
             ),
             'weight_kg': forms.NumberInput(
