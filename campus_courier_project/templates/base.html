@@ -137,6 +137,15 @@
             </button>
           </form>
 
+          {% if user.is_staff %}
+          <a href="{% url 'insights_dashboard' %}"
+             class="p-2 rounded-full text-brand-navySubtext hover:bg-brand-greyLight
+                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark"
+             aria-label="Staff Insights">
+            <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+          </a>
+          {% endif %}
+
           <a href="{% url 'profile' %}" class="min-h-touch min-w-touch inline-flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2" aria-label="Profile">
             <div class="w-9 h-9 rounded-full bg-brand-greenSoft text-brand-greenDarkText flex items-center justify-center font-semibold text-sm">
               {{ user.username|slice:":1"|upper }}
@@ -208,6 +217,17 @@
               <a href="{% url 'profile' %}" class="text-sm font-medium text-brand-navySubtext hover:text-brand-blueDarkText transition">
                 Profile
               </a>
+
+              {% if user.is_staff %}
+              <a href="{% url 'insights_dashboard' %}"
+                 class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium
+                        text-brand-navySubtext hover:bg-brand-greyLight hover:text-brand-navy
+                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark
+                        focus-visible:ring-offset-2">
+                <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                Insights
+              </a>
+              {% endif %}
 
               <form method="post" action="{% url 'logout' %}" class="inline">
                 {% csrf_token %}
