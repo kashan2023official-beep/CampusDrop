@@ -45,6 +45,27 @@ class OrderCreateView(LoginRequiredMixin, CreateView):
             messages.warning(self.request, "Fare model not available. Fare will be calculated later.")
             
         order.save()
+
+        from asgiref.sync import async_to_sync
+        from channels.layers import get_channel_layer
+
+        layer = get_channel_layer()
+        if layer is not None:
+            try:
+                async_to_sync(layer.group_send)(
+                    'couriers',
+                    {'type': 'order_available', 'data': {
+                        'id': order.id,
+                        'pickup_label': order.pickup_label,
+                        'dropoff_label': order.dropoff_label,
+                        'predicted_fare': float(order.predicted_fare),
+                        'distance_km': float(order.distance_km),
+                        'weight_kg': float(order.weight_kg),
+                    }},
+                )
+            except Exception:
+                pass
+
         log(
             actor=self.request.user,
             action="ORDER_CREATED",
