@@ -47,7 +47,13 @@ function renderAvailableOrders(orders) {
           <i data-lucide="package" class="w-6 h-6 text-brand-yellowDark"></i>
         </div>
         <div class="flex-1 min-w-0">
-          <p class="text-[10px] uppercase tracking-wide text-brand-navySubtext">Pickup</p>
+          <p class="text-[10px] uppercase tracking-wide text-brand-navySubtext flex items-center gap-2">
+            Pickup
+            <span class="inline-flex items-center gap-0.5 text-xs text-brand-navySubtext normal-case tracking-normal">
+              <i data-lucide="star" class="w-3 h-3 text-brand-yellow fill-brand-yellow"></i>
+              ${order.sender_rating ? order.sender_rating.toFixed(1) : '5.0'}
+            </span>
+          </p>
           <p class="text-sm font-semibold text-brand-navy truncate">${order.pickup_label || 'Campus Pickup'}</p>
           <p class="text-[10px] uppercase tracking-wide text-brand-navySubtext mt-2">Dropoff</p>
           <p class="text-sm font-semibold text-brand-navy truncate">${order.dropoff_label || 'Campus Dropoff'}</p>

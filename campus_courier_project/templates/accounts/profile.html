@@ -24,6 +24,23 @@
     </div>
   </div>
 
+  <!-- Rating summary card -->
+  <div class="bg-white rounded-2xl shadow-sm p-5 flex items-center gap-4">
+    <div class="w-12 h-12 rounded-full bg-brand-yellow/20 flex items-center justify-center shrink-0">
+      <i data-lucide="star" class="w-6 h-6 text-brand-yellow fill-brand-yellow"></i>
+    </div>
+    <div class="flex-1">
+      <p class="text-2xl font-bold text-brand-navy">{{ user.profile.rating|floatformat:1 }}</p>
+      <p class="text-xs text-brand-navySubtext">
+        {% if user.profile.rating_count %}
+          from {{ user.profile.rating_count }} rating{{ user.profile.rating_count|pluralize }}
+        {% else %}
+          No ratings yet
+        {% endif %}
+      </p>
+    </div>
+  </div>
+
   <!-- Editable fields -->
   <form method="post" action="{% url 'profile' %}" class="bg-white rounded-2xl shadow-sm p-6 space-y-4">
     {% csrf_token %}

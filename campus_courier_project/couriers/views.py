@@ -41,6 +41,7 @@ def available_orders_json(request):
             'distance_km': o.distance_km,
             'predicted_fare': o.predicted_fare,
             'created_at': o.created_at.isoformat(),
+            'sender_rating': round(o.sender.profile.rating, 1) if o.sender.profile.rating_count > 0 else 5.0,
         }
         for o in orders
     ]

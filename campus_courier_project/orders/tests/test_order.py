@@ -70,7 +70,7 @@ def test_cancel_pending(client, sender_user, order_in_campus):
     client.force_login(sender_user)
     assert order_in_campus.status == Status.PENDING
 
-    response = client.post(f'/orders/{order_in_campus.id}/cancel/')
+    response = client.post(f'/orders/{order_in_campus.id}/cancel/', data={'cancel_reason': 'OTHER'})
     assert response.status_code == 302
     order_in_campus.refresh_from_db()
     assert order_in_campus.status == Status.CANCELLED

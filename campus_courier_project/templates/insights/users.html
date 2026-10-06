@@ -19,6 +19,7 @@
             <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Phone</th>
             <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Role Mode</th>
             <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Permissions</th>
+            <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Rating</th>
             <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Joined</th>
           </tr>
         </thead>
@@ -44,6 +45,7 @@
                   <span class="text-brand-navySubtext">Standard User</span>
                 {% endif %}
               </td>
+              <td class="px-4 py-3 text-sm text-brand-navySubtext">{{ u.profile.rating|floatformat:1 }} ({{ u.profile.rating_count }})</td>
               <td class="px-4 py-3 text-sm text-brand-navySubtext whitespace-nowrap">{{ u.date_joined|date:"M d, Y" }}</td>
             </tr>
           {% empty %}

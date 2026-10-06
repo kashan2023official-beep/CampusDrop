@@ -29,6 +29,8 @@
             <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Route</th>
             <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Item / Weight</th>
             <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Status</th>
+            <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Rating</th>
+            <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Cancel Reason</th>
             <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Fare</th>
             <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Created</th>
             <th class="text-right text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Details</th>
@@ -61,6 +63,10 @@
                   {% include "components/_badge.html" with label=o.get_status_display variant="grey" %}
                 {% endif %}
               </td>
+              <td class="px-4 py-3 text-sm text-brand-navySubtext">
+                {% for r in o.ratings.all %}{{ r.stars }} {% empty %}-{% endfor %}
+              </td>
+              <td class="px-4 py-3 text-sm text-brand-navySubtext">{{ o.get_cancel_reason_display|default:"-" }}</td>
               <td class="px-4 py-3 text-sm text-brand-navySubtext">PKR {{ o.predicted_fare|default:"0" }}</td>
               <td class="px-4 py-3 text-sm text-brand-navySubtext whitespace-nowrap">{{ o.created_at|date:"M d, H:i" }}</td>
               <td class="px-4 py-3 text-right">

@@ -11,7 +11,7 @@ from django.views.generic import CreateView, DetailView, ListView, TemplateView
 from core.audit import client_ip, log
 from .forms import OrderCreateForm
 from .landmarks import describe_location, landmarks_for_json
-from .models import Order
+from .models import Order, Rating, CancelReason
 from .services import transition
 from .utils import CAMPUS_BOUNDS, CAMPUS_CENTER, compute_distance, is_inside_campus
 from ml_engine.predictor import predict_fare
@@ -64,6 +64,11 @@ class OrderListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return Order.objects.filter(sender=self.request.user).order_by('-created_at')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['cancel_reasons'] = CancelReason.choices
+        return context
+
 
 class OrderDetailView(LoginRequiredMixin, DetailView):
     model = Order
@@ -77,6 +82,15 @@ class OrderDetailView(LoginRequiredMixin, DetailView):
             raise PermissionDenied("You do not have permission to view this order.")
         return order
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['cancel_reasons'] = CancelReason.choices
+        user = self.request.user
+        if order := context.get('order'):
+            context['can_rate'] = order.can_be_rated_by(user)
+            context['user_rating'] = Rating.objects.filter(order=order, rater=user).first()
+        return context
+
 
 @login_required
 @require_POST
@@ -88,8 +102,27 @@ def order_cancel_view(request, pk):
         messages.error(request, f"Order cannot be cancelled in {order.status} status.")
         return redirect('order_detail', pk=order.pk)
 
+    cancel_reason = request.POST.get('cancel_reason')
+    valid_reasons = [choice[0] for choice in CancelReason.choices]
+    if not cancel_reason or cancel_reason not in valid_reasons:
+        messages.error(request, "A valid cancel reason is required.")
+        return redirect('order_detail', pk=order.pk)
+
     try:
+        order.cancel_reason = cancel_reason
+        order.cancel_note = request.POST.get('cancel_note', '')
+        # Must save fields before transition if transition relies on them,
+        # but transition saves the order anyway. Let's set it before transition.
         transition(order, 'CANCELLED', actor=request.user, ip=client_ip(request))
+        
+        from core.models import AuditLog
+        log_entry = AuditLog.objects.filter(action='ORDER_CANCELLED', target_type='Order', target_id=order.id).order_by('-created_at').first()
+        if log_entry:
+            if log_entry.metadata is None:
+                log_entry.metadata = {}
+            log_entry.metadata['cancel_reason'] = cancel_reason
+            log_entry.save(update_fields=['metadata'])
+            
         messages.success(request, "Order has been cancelled.")
     except ValidationError as err:
         messages.error(request, str(err))
@@ -98,6 +131,39 @@ def order_cancel_view(request, pk):
 
 
 OrderCancelView = order_cancel_view
+
+
+@login_required
+@require_POST
+def rate_order_view(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+    if not order.can_be_rated_by(request.user):
+        messages.error(request, "You cannot rate this order.")
+        return redirect('order_detail', pk=order.pk)
+
+    try:
+        stars = int(request.POST.get('stars', 0))
+        if not (1 <= stars <= 5):
+            raise ValueError()
+    except (ValueError, TypeError):
+        messages.error(request, "Invalid rating stars.")
+        return redirect('order_detail', pk=order.pk)
+
+    comment = request.POST.get('comment', '')
+    ratee = order.courier if request.user == order.sender else order.sender
+
+    Rating.objects.create(
+        order=order,
+        rater=request.user,
+        ratee=ratee,
+        stars=stars,
+        comment=comment
+    )
+    ratee.profile.update_rating(stars)
+    log(actor=request.user, action="ORDER_RATED", target_type="Order", target_id=order.id, metadata={'stars': stars}, ip=client_ip(request))
+    
+    messages.success(request, "Rating submitted successfully.")
+    return redirect('order_detail', pk=order.pk)
 
 
 @login_required

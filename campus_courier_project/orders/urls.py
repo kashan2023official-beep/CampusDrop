@@ -7,6 +7,7 @@ urlpatterns = [
     path('orders/', views.OrderListView.as_view(), name='order_list'),
     path('orders/<int:pk>/', views.OrderDetailView.as_view(), name='order_detail'),
     path('orders/<int:pk>/cancel/', views.order_cancel_view, name='order_cancel'),
+    path('orders/<int:pk>/rate/', views.rate_order_view, name='order_rate'),
     path('api/order/<int:pk>/status/', views.order_status_json, name='order_status_json'),
     path('api/campus-bounds/', views.campus_bounds_view, name='campus_bounds'),
     path('api/landmarks/', views.landmarks_json_view, name='landmarks_json'),

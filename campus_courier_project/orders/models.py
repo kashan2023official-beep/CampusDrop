@@ -18,6 +18,11 @@ class Status(models.TextChoices):
     PICKED_UP = 'PICKED_UP', 'Picked Up'
     DELIVERED = 'DELIVERED', 'Delivered'
     CANCELLED = 'CANCELLED', 'Cancelled'
+class CancelReason(models.TextChoices):
+    NO_COURIER = 'NO_COURIER', 'No Courier Available'
+    CHANGE_OF_MIND = 'CHANGE_OF_MIND', 'Change of Mind'
+    TOO_LATE = 'TOO_LATE', 'Taking Too Long'
+    OTHER = 'OTHER', 'Other'
 
 
 class Order(models.Model):
@@ -41,6 +46,8 @@ class Order(models.Model):
     final_fare = models.FloatField(null=True, blank=True)
 
     status = models.CharField(max_length=12, choices=Status.choices, default=Status.PENDING)
+    cancel_reason = models.CharField(max_length=20, choices=CancelReason.choices, blank=True)
+    cancel_note = models.TextField(blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     accepted_at = models.DateTimeField(null=True, blank=True)
@@ -61,3 +68,25 @@ class Order(models.Model):
 
     def contact_visible(self):
         return self.status in {Status.ACCEPTED, Status.PICKED_UP, Status.DELIVERED}
+
+    def can_be_rated_by(self, user):
+        if self.status != Status.DELIVERED:
+            return False
+        if user not in (self.sender, self.courier):
+            return False
+        return not Rating.objects.filter(order=self, rater=user).exists()
+
+
+class Rating(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='ratings')
+    rater = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ratings_given')
+    ratee = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ratings_received')
+    stars = models.IntegerField()
+    comment = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('order', 'rater')
+
+    def __str__(self):
+        return f"{self.stars} stars by {self.rater.username} on Order #{self.order.id}"

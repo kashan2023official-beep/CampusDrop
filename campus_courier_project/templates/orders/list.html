@@ -19,8 +19,8 @@
     <!-- Mobile Card List (< 768px) -->
     <div class="space-y-3 md:hidden">
       {% for o in orders %}
-        <a href="{% url 'order_detail' o.id %}" class="block rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2">
-          <div class="bg-white rounded-2xl shadow-sm p-5 flex items-center gap-4 hover:shadow-md transition">
+        <div class="relative bg-white rounded-2xl shadow-sm hover:shadow-md transition focus-within:ring-2 focus-within:ring-brand-greenDark focus-within:ring-offset-2">
+          <a href="{% url 'order_detail' o.id %}" class="block p-5 focus:outline-none flex items-center gap-4">
             {% if o.status == 'DELIVERED' %}
               <div class="w-12 h-12 rounded-full bg-brand-greenSoft flex items-center justify-center shrink-0">
                 <i data-lucide="package-check" class="w-6 h-6 text-brand-greenDarkText"></i>
@@ -55,8 +55,22 @@
                 {% include "components/_badge.html" with label=o.get_status_display variant="red" %}
               {% endif %}
             </div>
-          </div>
-        </a>
+          </a>
+          {% if o.status in 'PENDING ACCEPTED' %}
+            <div class="px-5 pb-5 pt-0 flex justify-end">
+              <form method="post" action="{% url 'order_cancel' o.id %}" class="inline-flex gap-2 relative z-10 w-full sm:w-auto">
+                {% csrf_token %}
+                <select name="cancel_reason" required class="flex-1 sm:flex-none rounded-full border border-brand-grey text-xs px-3 py-1.5 bg-white">
+                  <option value="">Reason.</option>
+                  {% for value, label in cancel_reasons %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+                </select>
+                <button type="submit" class="text-brand-redDarkText text-xs font-medium px-3 py-1.5 rounded-full hover:bg-brand-red/10 shrink-0">
+                  Cancel
+                </button>
+              </form>
+            </div>
+          {% endif %}
+        </div>
       {% endfor %}
     </div>
 
@@ -103,9 +117,23 @@
                 </td>
                 <td class="px-6 py-4 text-brand-navySubtext whitespace-nowrap">{{ o.created_at|date:"M d, H:i" }}</td>
                 <td class="px-6 py-4 text-right">
-                  <a href="{% url 'order_detail' o.id %}" class="text-brand-blueDarkText hover:text-brand-blueDark font-medium inline-flex items-center gap-1 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2">
-                    <span>View</span> &rarr;
-                  </a>
+                  <div class="flex items-center justify-end gap-2">
+                    {% if o.status in 'PENDING ACCEPTED' %}
+                      <form method="post" action="{% url 'order_cancel' o.id %}" class="inline-flex gap-2">
+                        {% csrf_token %}
+                        <select name="cancel_reason" required class="rounded-full border border-brand-grey text-xs px-3 py-1.5 bg-white">
+                          <option value="">Reason.</option>
+                          {% for value, label in cancel_reasons %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+                        </select>
+                        <button type="submit" class="text-brand-redDarkText text-xs font-medium px-3 py-1.5 rounded-full hover:bg-brand-red/10">
+                          Cancel
+                        </button>
+                      </form>
+                    {% endif %}
+                    <a href="{% url 'order_detail' o.id %}" class="text-brand-blueDarkText hover:text-brand-blueDark font-medium inline-flex items-center gap-1 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2">
+                      <span>View</span> &rarr;
+                    </a>
+                  </div>
                 </td>
               </tr>
             {% endfor %}
