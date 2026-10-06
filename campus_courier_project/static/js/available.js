@@ -12,11 +12,8 @@ function renderAvailableOrders(orders) {
   const container = document.getElementById('available-list');
   const skeleton = document.getElementById('available-skeleton');
 
-  if (firstLoad) {
-    firstLoad = false;
-    if (skeleton) skeleton.classList.add('hidden');
-    if (container) container.classList.remove('hidden');
-  }
+  if (skeleton) skeleton.classList.add('hidden');
+  if (container) container.classList.remove('hidden');
 
   if (!container) return;
 
@@ -95,7 +92,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const container = document.getElementById('available-list');
   const skeleton = document.getElementById('available-skeleton');
 
-  if (container && skeleton) {
+  // Only show skeleton if container does not already have server-rendered items
+  if (container && skeleton && container.children.length === 0) {
     skeleton.classList.remove('hidden');
     container.classList.add('hidden');
   }
@@ -114,14 +112,18 @@ document.addEventListener('DOMContentLoaded', () => {
     .then((data) => renderAvailableOrders(data))
     .catch((err) => {
       console.warn('Initial orders fetch failed:', err);
-      if (firstLoad) {
-        firstLoad = false;
-        if (skeleton) skeleton.classList.add('hidden');
-        if (container) container.classList.remove('hidden');
-      }
+      if (skeleton) skeleton.classList.add('hidden');
+      if (container) container.classList.remove('hidden');
     });
 
+  let stopPolling = null;
   if (container && typeof pollEvery === 'function') {
-    pollEvery('/courier/available/json/', 5000, renderAvailableOrders);
+    stopPolling = pollEvery('/courier/available/json/', 5000, renderAvailableOrders);
   }
+
+  window.addEventListener('beforeunload', () => {
+    if (typeof stopPolling === 'function') {
+      stopPolling();
+    }
+  });
 });

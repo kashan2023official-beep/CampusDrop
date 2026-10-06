@@ -29,6 +29,7 @@ def available_orders_json(request):
     orders = (
         Order.objects.filter(status='PENDING')
         .exclude(sender=request.user)
+        .select_related('sender__profile')
         .order_by('-created_at')[:50]
     )
     data = [
