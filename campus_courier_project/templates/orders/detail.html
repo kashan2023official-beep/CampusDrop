@@ -12,6 +12,7 @@
 {% endblock %}
 
 {% block content %}
+<script>window.CURRENT_USER_ID = {{ request.user.id }};</script>
 <div id="order-status-root" data-order-id="{{ order.id }}" class="max-w-3xl mx-auto space-y-6">
   <div class="flex items-center justify-between pb-2">
     <div class="flex items-center space-x-3">
@@ -309,6 +310,24 @@
       {% endif %}
     </div>
   </div>
+
+  {% if order.chat_allowed %}
+    {% if request.user == order.sender %}
+      {% include "components/_chat_panel.html" with order=order other_party=order.courier %}
+    {% else %}
+      {% include "components/_chat_panel.html" with order=order other_party=order.sender %}
+    {% endif %}
+
+    <button type="button"
+            onclick="window.dispatchEvent(new CustomEvent('open-chat'))"
+            class="fixed right-4 bottom-20 md:bottom-6 md:right-6 z-30
+                   w-14 h-14 rounded-full bg-brand-green text-white shadow-lg
+                   flex items-center justify-center
+                   active:scale-95 transition-transform
+                   focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-green/30">
+      <i data-lucide="message-circle" class="w-6 h-6"></i>
+    </button>
+  {% endif %}
 </div>
 {% endblock %}
 
@@ -321,4 +340,5 @@
     initStaticMaps('.static-map');
   });
 </script>
+<script src="{% static 'js/chat.js' %}"></script>
 {% endblock %}
