@@ -76,6 +76,12 @@ class Order(models.Model):
             return False
         return not Rating.objects.filter(order=self, rater=user).exists()
 
+    def chat_allowed(self):
+        return self.status in ('ACCEPTED', 'PICKED_UP', 'DELIVERED')
+
+    def chat_parties(self):
+        return [u for u in (self.sender, self.courier) if u is not None]
+
 
 class Rating(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='ratings')
@@ -90,3 +96,18 @@ class Rating(models.Model):
 
     def __str__(self):
         return f"{self.stars} stars by {self.rater.username} on Order #{self.order.id}"
+
+class ChatMessage(models.Model):
+    order = models.ForeignKey(
+        'orders.Order', on_delete=models.CASCADE, related_name='messages')
+    sender = models.ForeignKey(
+        'auth.User', on_delete=models.CASCADE, related_name='chat_messages')
+    body = models.TextField(max_length=2000)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at']
+        indexes = [models.Index(fields=['order', 'created_at'])]
+
+    def __str__(self):
+        return f"{self.sender.username} @ order {self.order_id}: {self.body[:30]}"

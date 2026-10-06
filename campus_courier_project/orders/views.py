@@ -277,3 +277,72 @@ def hotspots_view(request):
     hotspots = compute_hotspots()
     return JsonResponse({'available': True, 'hotspots': hotspots})
 
+@login_required
+@require_GET
+def order_messages_list(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+    if request.user not in order.chat_parties() and not request.user.is_staff:
+        raise PermissionDenied("Not permitted to view chat.")
+    if not order.chat_allowed():
+        return JsonResponse({'messages': [], 'chat_allowed': False})
+    
+    messages = order.messages.select_related('sender').all()
+    return JsonResponse({
+        'chat_allowed': True,
+        'messages': [
+            {
+                'id': m.id,
+                'sender_id': m.sender_id,
+                'sender_username': m.sender.username,
+                'body': m.body,
+                'created_at': m.created_at.isoformat()
+            }
+            for m in messages
+        ]
+    })
+
+import json
+
+@login_required
+@require_POST
+def order_messages_create(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+    if request.user not in order.chat_parties() and not request.user.is_staff:
+        raise PermissionDenied("Not permitted to send messages.")
+    if not order.chat_allowed():
+        return JsonResponse({'error': 'chat_not_allowed'}, status=400)
+    
+    try:
+        data = json.loads(request.body)
+        body = (data.get('body') or '').strip()
+    except json.JSONDecodeError:
+        body = ''
+        
+    if not body or len(body) > 2000:
+        return JsonResponse({'error': 'invalid_body'}, status=400)
+        
+    from .models import ChatMessage
+    m = ChatMessage.objects.create(order=order, sender=request.user, body=body)
+    
+    msg_data = {
+        'id': m.id,
+        'sender_id': m.sender_id,
+        'sender_username': m.sender.username,
+        'body': m.body,
+        'created_at': m.created_at.isoformat()
+    }
+    
+    from asgiref.sync import async_to_sync
+    from channels.layers import get_channel_layer
+    layer = get_channel_layer()
+    if layer:
+        try:
+            async_to_sync(layer.group_send)(
+                f'order_{order.id}_chat',
+                {'type': 'chat_message', 'data': msg_data},
+            )
+        except Exception:
+            pass
+            
+    return JsonResponse({'ok': True, 'message': msg_data})
+

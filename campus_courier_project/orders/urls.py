@@ -15,4 +15,6 @@ urlpatterns = [
     path('api/reverse-geocode/', views.reverse_geocode_view, name='reverse_geocode'),
     path('api/hotspots/', views.hotspots_view, name='hotspots'),
     path('api/hotspots/json/', views.hotspots_view, name='hotspots_json'),
+    path('api/order/<int:pk>/messages/', views.order_messages_list, name='order_messages_list'),
+    path('api/order/<int:pk>/messages/create/', views.order_messages_create, name='order_messages_create'),
 ]
