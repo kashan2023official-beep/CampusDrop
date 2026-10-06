@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -45,6 +46,7 @@ INSTALLED_APPS = [
     'couriers',
     'ml_engine',
     'insights',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -138,3 +140,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/login/'
+
+ASGI_APPLICATION = 'campus_courier.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
