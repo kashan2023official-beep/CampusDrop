@@ -23,59 +23,7 @@
       }
     }
   </style>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              green:          '#22C55E',   // refined primary green
-              greenDark:      '#16A34A',   // hover / pressed
-              greenLight:     '#4ADE80',   // accents
-              greenDarkText:  '#15803D',   // text on soft green backgrounds
-              greenTint:      '#F0FDF4',   // very soft background (icon circles)
-              greenSoft:      '#DCFCE7',   // soft chip / badge background
-              navy:           '#05192D',
-              navyLight:      '#213147',
-              navyMedium:     '#13253A',
-              navySubtext:    '#5D6A77',
-              navySubtextAlt: '#9BA3AB',
-              grey:           '#E8E8EE',
-              greyLight:      '#EFEFF5',
-              greySubtle:     '#F7F7FC',
-              greyMedium:     '#E1E1E8',
-              greyDark:       '#848492',
-              greyDarkText:   '#595D78',
-              blue:           '#5EB1FF',
-              blueDark:       '#257DFE',
-              blueDarkText:   '#0065D1',
-              red:            '#FF5400',
-              redDark:        '#DD3400',
-              redDarkText:    '#C01100',
-              orange:         '#FF931E',
-              orangeDark:     '#D87300',
-              yellow:         '#FCCE0D',
-              yellowDark:     '#CFA600',
-              purple:         '#7933FF',
-              pink:           '#FF6EA9',
-              beige:          '#EFEBE4',
-              beigeSubtle:    '#FFFBF3',
-            }
-          },
-          fontFamily: {
-            sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
-          },
-          minHeight: {
-            'touch': '44px',
-          },
-          minWidth: {
-            'touch': '44px',
-          },
-        }
-      }
-    }
-  </script>
+  <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
