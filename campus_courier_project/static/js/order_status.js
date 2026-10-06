@@ -68,3 +68,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 });
+
+// WebSocket upgrade — lowers latency when available
+(function () {
+  function initWS() {
+    if (!window.CourierWS) return;
+    const rootEl = document.getElementById('order-status-root');
+    if (!rootEl) return;
+    const orderId = rootEl.getAttribute('data-order-id');
+    if (!orderId) return;
+    try {
+      window.CourierWS.connectOrderStatus(orderId, function (data) {
+        if (data) updateOrderStatus(data);
+      });
+    } catch (_) {
+      // Keep polling as fallback. Silently ignore.
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initWS);
+  } else {
+    initWS();
+  }
+})();
+

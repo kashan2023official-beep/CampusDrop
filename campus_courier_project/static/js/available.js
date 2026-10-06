@@ -88,18 +88,11 @@ function renderAvailableOrders(orders) {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+function fetchOrders() {
   const container = document.getElementById('available-list');
   const skeleton = document.getElementById('available-skeleton');
 
-  // Only show skeleton if container does not already have server-rendered items
-  if (container && skeleton && container.children.length === 0) {
-    skeleton.classList.remove('hidden');
-    container.classList.add('hidden');
-  }
-
-  // Fetch immediately on initial load
-  fetch('/courier/available/json/', {
+  return fetch('/courier/available/json/', {
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
       'Accept': 'application/json',
@@ -111,10 +104,24 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     .then((data) => renderAvailableOrders(data))
     .catch((err) => {
-      console.warn('Initial orders fetch failed:', err);
+      console.warn('Orders fetch failed:', err);
       if (skeleton) skeleton.classList.add('hidden');
       if (container) container.classList.remove('hidden');
     });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const container = document.getElementById('available-list');
+  const skeleton = document.getElementById('available-skeleton');
+
+  // Only show skeleton if container does not already have server-rendered items
+  if (container && skeleton && container.children.length === 0) {
+    skeleton.classList.remove('hidden');
+    container.classList.add('hidden');
+  }
+
+  // Fetch immediately on initial load
+  fetchOrders();
 
   let stopPolling = null;
   if (container && typeof pollEvery === 'function') {
@@ -127,3 +134,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
+// WebSocket upgrade — near-instant refresh on new/removed orders
+(function () {
+  if (!window.CourierWS) return;
+  try {
+    window.CourierWS.connectCourierFeed(function (msg) {
+      if (msg.type === 'order_available' || msg.type === 'order_taken') {
+        if (typeof refresh === 'function') refresh();
+        else if (typeof loadOrders === 'function') loadOrders();
+        else if (typeof fetchOrders === 'function') fetchOrders();
+      }
+    });
+  } catch (_) {
+    // Keep polling as fallback.
+  }
+})();
+

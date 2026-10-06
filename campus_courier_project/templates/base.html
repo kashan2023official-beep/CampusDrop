@@ -344,7 +344,10 @@
        aria-live="polite">
   </div>
 
-  {% block scripts %}{% endblock %}
+  <script src="{% static 'js/ws.js' %}"></script>
+  {% block scripts %}
+  {# Page scripts (order_status.js, available.js) load here #}
+  {% endblock %}
   <script src="{% static 'js/spinner.js' %}"></script>
   <script src="{% static 'js/toasts.js' %}"></script>
   <script>
