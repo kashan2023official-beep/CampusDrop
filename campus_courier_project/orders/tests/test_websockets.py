@@ -105,6 +105,18 @@ async def test_ws_courier_feed_requires_login():
 
 @pytest.mark.django_db(transaction=True)
 @pytest.mark.asyncio
+async def test_ws_courier_feed_requires_courier():
+    non_courier = await database_sync_to_async(User.objects.create_user)('ws_non_courier')
+    
+    communicator = WebsocketCommunicator(application, "/ws/courier/available/")
+    communicator.scope['user'] = non_courier
+    connected, subprotocol = await communicator.connect()
+    
+    assert not connected
+    await communicator.disconnect()
+
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.asyncio
 async def test_ws_courier_feed_broadcast():
     courier = await database_sync_to_async(User.objects.create_user)('ws_courier_5')
     await set_courier_profile(courier)
