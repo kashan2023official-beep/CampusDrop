@@ -8,7 +8,7 @@
 [![Tests](https://img.shields.io/badge/Tests-44%2F44%20Passed-brightgreen.svg)]()
 [![License](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
 
-A modern, hyperlocal peer-to-peer parcel dispatch and courier platform engineered specifically for university campuses. Designed and calibrated for the **University of Engineering and Technology (UET), Lahore Main Campus (Ghari Shahu)**.
+A modern, hyperlocal peer-to-peer parcel dispatch and courier platform engineered specifically for university campuses. Designed and calibrated for the **University of Engineering and Technology (UET), Lahore Main Campus**.
 
 Campus Courier empowers students and faculty to seamlessly dispatch documents, food, books, electronics, and supplies across campus buildings, fulfilled by verified student couriers with machine-learning-driven dynamic fare estimation in Pakistani Rupees (PKR).
 
