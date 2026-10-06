@@ -7,66 +7,70 @@
       <h2 class="text-lg font-bold text-brand-navy">All Campus Orders ({{ orders|length }})</h2>
       <p class="text-xs text-brand-navySubtext">Filter and audit all dispatches across the campus boundary.</p>
     </div>
-    <!-- Quick Status Filters -->
-    <div class="flex flex-wrap gap-2 text-xs">
-      <a href="{% url 'insights_orders' %}" class="px-2.5 py-1 rounded-md bg-brand-greyLight text-brand-navy hover:bg-brand-grey">All</a>
-      <a href="{% url 'insights_orders' %}?status=PENDING" class="px-2.5 py-1 rounded-md bg-brand-yellow/20 text-brand-yellowDark hover:bg-brand-yellow/30">Pending</a>
-      <a href="{% url 'insights_orders' %}?status=ACCEPTED" class="px-2.5 py-1 rounded-md bg-brand-blue/20 text-brand-blueDarkText hover:bg-brand-blue/30">Accepted</a>
-      <a href="{% url 'insights_orders' %}?status=PICKED_UP" class="px-2.5 py-1 rounded-md bg-brand-purple/15 text-brand-purple hover:bg-brand-purple/25">Picked Up</a>
-      <a href="{% url 'insights_orders' %}?status=DELIVERED" class="px-2.5 py-1 rounded-md bg-brand-green/20 text-brand-greenDarkText hover:bg-brand-green/30">Delivered</a>
-      <a href="{% url 'insights_orders' %}?status=CANCELLED" class="px-2.5 py-1 rounded-md bg-brand-red/15 text-brand-redDarkText hover:bg-brand-red/25">Cancelled</a>
-    </div>
+  </div>
+  
+  <div class="bg-white rounded-2xl shadow-sm p-4 mb-6 flex flex-wrap gap-3 items-end">
+    <a href="{% url 'insights_orders' %}" class="px-4 py-2 rounded-full border border-brand-grey text-sm {% if not current_filter %}bg-brand-grey text-brand-navy{% else %}hover:bg-brand-greyLight{% endif %}">All</a>
+    <a href="{% url 'insights_orders' %}?status=PENDING" class="px-4 py-2 rounded-full border border-brand-grey text-sm {% if current_filter == 'PENDING' %}bg-brand-yellow/20 text-brand-yellowDark{% else %}hover:bg-brand-greyLight{% endif %}">Pending</a>
+    <a href="{% url 'insights_orders' %}?status=ACCEPTED" class="px-4 py-2 rounded-full border border-brand-grey text-sm {% if current_filter == 'ACCEPTED' %}bg-brand-blue/20 text-brand-blueDarkText{% else %}hover:bg-brand-greyLight{% endif %}">Accepted</a>
+    <a href="{% url 'insights_orders' %}?status=PICKED_UP" class="px-4 py-2 rounded-full border border-brand-grey text-sm {% if current_filter == 'PICKED_UP' %}bg-brand-purple/15 text-brand-purple{% else %}hover:bg-brand-greyLight{% endif %}">Picked Up</a>
+    <a href="{% url 'insights_orders' %}?status=DELIVERED" class="px-4 py-2 rounded-full border border-brand-grey text-sm {% if current_filter == 'DELIVERED' %}bg-brand-green/20 text-brand-greenDarkText{% else %}hover:bg-brand-greyLight{% endif %}">Delivered</a>
+    <a href="{% url 'insights_orders' %}?status=CANCELLED" class="px-4 py-2 rounded-full border border-brand-grey text-sm {% if current_filter == 'CANCELLED' %}bg-brand-red/15 text-brand-redDarkText{% else %}hover:bg-brand-greyLight{% endif %}">Cancelled</a>
   </div>
 
-  <div class="bg-white shadow-sm border border-brand-grey rounded-lg overflow-hidden">
+  <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
     <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-brand-grey text-sm">
-        <thead class="bg-brand-greySubtle text-brand-navySubtext text-xs uppercase font-medium">
+      <table class="w-full">
+        <thead class="bg-brand-greySubtle">
           <tr>
-            <th class="px-6 py-3 text-left">Order</th>
-            <th class="px-6 py-3 text-left">Sender</th>
-            <th class="px-6 py-3 text-left">Courier</th>
-            <th class="px-6 py-3 text-left">Route</th>
-            <th class="px-6 py-3 text-left">Item / Weight</th>
-            <th class="px-6 py-3 text-left">Status</th>
-            <th class="px-6 py-3 text-left">Fare</th>
-            <th class="px-6 py-3 text-left">Created</th>
-            <th class="px-6 py-3 text-right">Details</th>
+            <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Order</th>
+            <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Sender</th>
+            <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Courier</th>
+            <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Route</th>
+            <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Item / Weight</th>
+            <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Status</th>
+            <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Fare</th>
+            <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Created</th>
+            <th class="text-right text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Details</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-brand-grey">
+        <tbody>
           {% for o in orders %}
-            <tr class="hover:bg-brand-greySubtle transition">
-              <td class="px-6 py-3 font-semibold text-brand-navy">#{{ o.id }}</td>
-              <td class="px-6 py-3 text-brand-navySubtext">{{ o.sender.username }}</td>
-              <td class="px-6 py-3 text-brand-navySubtext">{{ o.courier.username|default:"—" }}</td>
-              <td class="px-6 py-3 text-brand-navySubtext text-xs">
+            <tr class="border-t border-brand-grey hover:bg-brand-greySubtle transition-colors">
+              <td class="px-4 py-3 font-semibold text-sm text-brand-navy">#{{ o.id }}</td>
+              <td class="px-4 py-3 text-sm text-brand-navySubtext">{{ o.sender.username }}</td>
+              <td class="px-4 py-3 text-sm text-brand-navySubtext">{{ o.courier.username|default:"—" }}</td>
+              <td class="px-4 py-3 text-sm text-brand-navySubtext text-xs">
                 {{ o.pickup_label|default:"Campus" }} &rarr; {{ o.dropoff_label|default:"Campus" }}
               </td>
-              <td class="px-6 py-3 text-brand-navySubtext">
+              <td class="px-4 py-3 text-sm text-brand-navySubtext">
                 {{ o.get_item_type_display }} ({{ o.weight_kg }} kg)
               </td>
-              <td class="px-6 py-3">
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold
-                  {% if o.status == 'DELIVERED' %}bg-brand-green/20 text-brand-greenDarkText
-                  {% elif o.status == 'PENDING' %}bg-brand-yellow/20 text-brand-yellowDark
-                  {% elif o.status == 'ACCEPTED' %}bg-brand-blue/20 text-brand-blueDarkText
-                  {% elif o.status == 'PICKED_UP' %}bg-brand-purple/15 text-brand-purple
-                  {% elif o.status == 'CANCELLED' %}bg-brand-red/15 text-brand-redDarkText
-                  {% else %}bg-brand-greyLight text-brand-navy{% endif %}">
-                  {{ o.get_status_display }}
-                </span>
+              <td class="px-4 py-3">
+                {% if o.status == 'DELIVERED' %}
+                  {% include "components/_badge.html" with label=o.get_status_display variant="green" %}
+                {% elif o.status == 'PENDING' %}
+                  {% include "components/_badge.html" with label=o.get_status_display variant="yellow" %}
+                {% elif o.status == 'ACCEPTED' %}
+                  {% include "components/_badge.html" with label=o.get_status_display variant="blue" %}
+                {% elif o.status == 'PICKED_UP' %}
+                  {% include "components/_badge.html" with label=o.get_status_display variant="purple" %}
+                {% elif o.status == 'CANCELLED' %}
+                  {% include "components/_badge.html" with label=o.get_status_display variant="red" %}
+                {% else %}
+                  {% include "components/_badge.html" with label=o.get_status_display variant="grey" %}
+                {% endif %}
               </td>
-              <td class="px-6 py-3 text-brand-navySubtext">PKR {{ o.predicted_fare|default:"0" }}</td>
-              <td class="px-6 py-3 text-brand-navySubtext whitespace-nowrap">{{ o.created_at|date:"M d, H:i" }}</td>
-              <td class="px-6 py-3 text-right">
+              <td class="px-4 py-3 text-sm text-brand-navySubtext">PKR {{ o.predicted_fare|default:"0" }}</td>
+              <td class="px-4 py-3 text-sm text-brand-navySubtext whitespace-nowrap">{{ o.created_at|date:"M d, H:i" }}</td>
+              <td class="px-4 py-3 text-right">
                 <a href="{% url 'order_detail' o.id %}" class="text-brand-blueDarkText hover:text-brand-blueDark font-medium text-xs">
                   View &rarr;
                 </a>
               </td>
             </tr>
           {% empty %}
-            <tr><td colspan="9" class="px-6 py-6 text-center text-brand-navySubtext">No orders match the filter criteria.</td></tr>
+            <tr><td colspan="9" class="px-4 py-6 text-center text-sm text-brand-navySubtext">No orders match the filter criteria.</td></tr>
           {% endfor %}
         </tbody>
       </table>

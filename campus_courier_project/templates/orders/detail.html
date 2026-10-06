@@ -13,59 +13,102 @@
 
 {% block content %}
 <div id="order-status-root" data-order-id="{{ order.id }}" class="max-w-3xl mx-auto space-y-6">
-  <div class="flex items-center justify-between border-b border-brand-grey pb-4">
+  <div class="flex items-center justify-between pb-2">
     <div class="flex items-center space-x-3">
-      <a href="{% url 'order_list' %}" class="text-brand-navySubtext hover:text-brand-navy text-sm font-medium">&larr; Back to Orders</a>
+      <a href="{% url 'order_list' %}" class="text-brand-navySubtext hover:text-brand-navy text-sm font-medium inline-flex items-center gap-1 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+        <span>Back to Orders</span>
+      </a>
       <span class="text-brand-greyDark">|</span>
-      <h1 class="text-2xl font-bold text-brand-navy">Order #{{ order.id }}</h1>
+      <h1 class="text-xl font-bold text-brand-navy">Order #{{ order.id }}</h1>
     </div>
-    <div>
-      <span id="status-badge" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
-        {% if order.status == 'PENDING' %}bg-brand-yellow/20 text-brand-yellowDark
-        {% elif order.status == 'ACCEPTED' %}bg-brand-blue/20 text-brand-blueDarkText
-        {% elif order.status == 'PICKED_UP' %}bg-brand-purple/15 text-brand-purple
-        {% elif order.status == 'DELIVERED' %}bg-brand-green/20 text-brand-greenDarkText
-        {% elif order.status == 'CANCELLED' %}bg-brand-red/15 text-brand-redDarkText
-        {% endif %}">
-        {{ order.get_status_display }}
-      </span>
+  </div>
+
+  <!-- Summary Card at Top -->
+  <div class="bg-white rounded-2xl shadow-sm p-5 space-y-4">
+    <!-- Route header -->
+    <div class="flex items-start gap-3">
+      <div class="w-10 h-10 rounded-full bg-brand-greenTint flex items-center justify-center shrink-0 mt-0.5">
+        <i data-lucide="map-pin" class="w-5 h-5 text-brand-greenDarkText"></i>
+      </div>
+      <div class="flex-1 space-y-2">
+        <div>
+          <p class="text-[10px] uppercase tracking-wide text-brand-navySubtext">Pickup</p>
+          <p class="text-sm font-semibold text-brand-navy">{{ order.pickup_label|default:"Campus Pickup" }}</p>
+        </div>
+        <div>
+          <p class="text-[10px] uppercase tracking-wide text-brand-navySubtext">Dropoff</p>
+          <p class="text-sm font-semibold text-brand-navy">{{ order.dropoff_label|default:"Campus Dropoff" }}</p>
+        </div>
+      </div>
+      <div class="text-right shrink-0">
+        <span id="status-badge" class="inline-flex items-center">
+          {% if order.status == 'PENDING' %}
+            {% include "components/_badge.html" with label=order.get_status_display variant="yellow" %}
+          {% elif order.status == 'ACCEPTED' %}
+            {% include "components/_badge.html" with label=order.get_status_display variant="blue" %}
+          {% elif order.status == 'PICKED_UP' %}
+            {% include "components/_badge.html" with label=order.get_status_display variant="purple" %}
+          {% elif order.status == 'DELIVERED' %}
+            {% include "components/_badge.html" with label=order.get_status_display variant="green" %}
+          {% elif order.status == 'CANCELLED' %}
+            {% include "components/_badge.html" with label=order.get_status_display variant="red" %}
+          {% endif %}
+        </span>
+      </div>
+    </div>
+
+    <!-- Meta row -->
+    <div class="grid grid-cols-3 gap-3 pt-4 border-t border-brand-grey">
+      <div>
+        <p class="text-[10px] uppercase tracking-wide text-brand-navySubtext">Item</p>
+        <p class="text-sm font-semibold text-brand-navy">{{ order.get_item_type_display }}</p>
+      </div>
+      <div>
+        <p class="text-[10px] uppercase tracking-wide text-brand-navySubtext">Weight</p>
+        <p class="text-sm font-semibold text-brand-navy">{{ order.weight_kg }} kg</p>
+      </div>
+      <div>
+        <p class="text-[10px] uppercase tracking-wide text-brand-navySubtext">Fare</p>
+        <p class="text-sm font-semibold text-brand-navy">Rs {{ order.predicted_fare|floatformat:0 }}</p>
+      </div>
     </div>
   </div>
 
   <!-- Status Timeline -->
-  <div class="bg-white p-6 rounded-lg shadow-sm border border-brand-grey">
+  <div class="bg-white rounded-2xl shadow-sm p-5">
     <h2 class="text-xs font-semibold uppercase tracking-wider text-brand-navySubtext mb-4">Delivery Progression</h2>
     <div id="status-timeline">
       {% if order.status == 'CANCELLED' %}
-        <div class="p-3 bg-brand-red/10 border border-brand-red/30 rounded-md text-sm text-brand-redDarkText font-medium">
+        <div class="p-3 bg-brand-red/10 border border-brand-red/30 rounded-xl text-sm text-brand-redDarkText font-medium">
           This order has been cancelled.
         </div>
       {% else %}
         <div class="flex items-center justify-between relative">
           <div class="w-full flex justify-between items-center text-xs font-medium">
             <div class="flex flex-col items-center">
-              <span id="timeline-step-1" class="w-8 h-8 rounded-full flex items-center justify-center {% if order.status in 'PENDING ACCEPTED PICKED_UP DELIVERED' %}bg-brand-green text-brand-navy font-semibold{% else %}bg-brand-grey text-brand-navySubtext{% endif %}">
+              <span id="timeline-step-1" class="w-8 h-8 rounded-full flex items-center justify-center {% if order.status in 'PENDING ACCEPTED PICKED_UP DELIVERED' %}bg-brand-green text-white font-semibold{% else %}bg-brand-grey text-brand-navySubtext{% endif %}">
                 1
               </span>
               <span class="mt-2 text-brand-navy font-semibold">Pending</span>
             </div>
             <div id="timeline-line-1" class="flex-1 h-1 mx-2 {% if order.status in 'ACCEPTED PICKED_UP DELIVERED' %}bg-brand-green{% else %}bg-brand-grey{% endif %}"></div>
             <div class="flex flex-col items-center">
-              <span id="timeline-step-2" class="w-8 h-8 rounded-full flex items-center justify-center {% if order.status in 'ACCEPTED PICKED_UP DELIVERED' %}bg-brand-green text-brand-navy font-semibold{% else %}bg-brand-grey text-brand-navySubtext{% endif %}">
+              <span id="timeline-step-2" class="w-8 h-8 rounded-full flex items-center justify-center {% if order.status in 'ACCEPTED PICKED_UP DELIVERED' %}bg-brand-green text-white font-semibold{% else %}bg-brand-grey text-brand-navySubtext{% endif %}">
                 2
               </span>
               <span class="mt-2 text-brand-navy font-semibold">Accepted</span>
             </div>
             <div id="timeline-line-2" class="flex-1 h-1 mx-2 {% if order.status in 'PICKED_UP DELIVERED' %}bg-brand-green{% else %}bg-brand-grey{% endif %}"></div>
             <div class="flex flex-col items-center">
-              <span id="timeline-step-3" class="w-8 h-8 rounded-full flex items-center justify-center {% if order.status in 'PICKED_UP DELIVERED' %}bg-brand-green text-brand-navy font-semibold{% else %}bg-brand-grey text-brand-navySubtext{% endif %}">
+              <span id="timeline-step-3" class="w-8 h-8 rounded-full flex items-center justify-center {% if order.status in 'PICKED_UP DELIVERED' %}bg-brand-green text-white font-semibold{% else %}bg-brand-grey text-brand-navySubtext{% endif %}">
                 3
               </span>
               <span class="mt-2 text-brand-navy font-semibold">Picked Up</span>
             </div>
-            <div id="timeline-line-3" class="flex-1 h-1 mx-2 {% if order.status == 'DELIVERED' %}bg-brand-green{% else %}bg-brand-grey{% endif %}"></div>
+            <div id="timeline-line-3" class="flex-1 h-1 mx-2 {% if order.status in 'DELIVERED' %}bg-brand-green{% else %}bg-brand-grey{% endif %}"></div>
             <div class="flex flex-col items-center">
-              <span id="timeline-step-4" class="w-8 h-8 rounded-full flex items-center justify-center {% if order.status == 'DELIVERED' %}bg-brand-green text-brand-navy font-semibold{% else %}bg-brand-grey text-brand-navySubtext{% endif %}">
+              <span id="timeline-step-4" class="w-8 h-8 rounded-full flex items-center justify-center {% if order.status in 'DELIVERED' %}bg-brand-green text-white font-semibold{% else %}bg-brand-grey text-brand-navySubtext{% endif %}">
                 4
               </span>
               <span class="mt-2 text-brand-navy font-semibold">Delivered</span>
@@ -77,9 +120,9 @@
   </div>
 
   <!-- Order Details Card -->
-  <div class="bg-white p-6 rounded-lg shadow-sm border border-brand-grey space-y-6">
+  <div class="bg-white rounded-2xl shadow-sm p-5 space-y-6">
     <!-- Map Container -->
-    <div id="detail-map" class="static-map w-full h-[260px] md:h-[320px] rounded-lg border border-brand-grey" style="z-index: 1;"
+    <div id="detail-map" class="static-map w-full h-[260px] md:h-[320px] rounded-xl border border-brand-grey overflow-hidden" style="z-index: 1;"
          data-pickup="{{ order.pickup_lat }},{{ order.pickup_lon }}"
          data-dropoff="{{ order.dropoff_lat }},{{ order.dropoff_lon }}">
     </div>
@@ -87,7 +130,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="space-y-3">
         <h3 class="text-sm font-semibold uppercase tracking-wider text-brand-navySubtext">Route & Distance</h3>
-        <div class="p-4 bg-brand-greySubtle rounded-md border border-brand-greyLight space-y-2 text-sm">
+        <div class="p-4 bg-brand-greySubtle rounded-xl space-y-2 text-sm">
           <div>
             <span class="text-brand-navySubtext block text-xs">Pickup:</span>
             <span class="font-medium text-brand-navy">{{ order.pickup_label|default:"Campus" }}</span>
@@ -107,7 +150,7 @@
 
       <div class="space-y-3">
         <h3 class="text-sm font-semibold uppercase tracking-wider text-brand-navySubtext">Package Details</h3>
-        <div class="p-4 bg-brand-greySubtle rounded-md border border-brand-greyLight space-y-2 text-sm">
+        <div class="p-4 bg-brand-greySubtle rounded-xl space-y-2 text-sm">
           <div class="flex justify-between">
             <span class="text-brand-navySubtext">Item Type:</span>
             <span class="font-medium text-brand-navy">{{ order.get_item_type_display }}</span>
@@ -120,7 +163,7 @@
             <span class="text-brand-navySubtext">Estimated Fare:</span>
             <span class="font-medium text-brand-navy">
               {% if order.predicted_fare > 0 %}
-                {{ order.predicted_fare }} PKR
+                Rs {{ order.predicted_fare|floatformat:0 }}
               {% else %}
                 Fare pending
               {% endif %}
@@ -143,15 +186,16 @@
     </div>
 
     <!-- Contact Info -->
-    <div class="bg-brand-greySubtle rounded-md p-4 border border-brand-grey">
+    <div class="bg-brand-greySubtle rounded-xl p-4">
       {% if request.user == order.sender %}
         <div class="flex items-center justify-between mb-2">
           <h3 class="text-sm font-semibold uppercase tracking-wider text-brand-navySubtext">Courier Contact</h3>
           {% if order.status == 'ACCEPTED' or order.status == 'PICKED_UP' or order.status == 'DELIVERED' %}
             <a href="https://www.google.com/maps/dir/?api=1&destination={{ order.dropoff_lat }},{{ order.dropoff_lon }}&travelmode=driving"
                target="_blank" rel="noopener"
-               class="text-xs font-medium text-brand-blueDarkText hover:text-brand-blueDark hover:underline inline-flex items-center gap-1">
-               Track on Google Maps
+               class="text-xs font-medium text-brand-blueDarkText hover:text-brand-blueDark hover:underline inline-flex items-center gap-1 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2">
+               <i data-lucide="navigation" class="w-3.5 h-3.5"></i>
+               <span>Track on Google Maps</span>
             </a>
           {% endif %}
         </div>
@@ -179,39 +223,33 @@
     </div>
 
     <!-- Actions (Sender cancel & Courier actions) -->
-    <div class="pt-4 border-t border-brand-greyLight flex flex-col md:flex-row justify-end gap-3">
+    <div class="pt-4 border-t border-brand-grey flex flex-col md:flex-row justify-end gap-3">
       {% if request.user == order.sender and order.status in 'PENDING ACCEPTED' %}
         <form method="post" action="{% url 'order_cancel' order.id %}" class="w-full md:w-auto">
           {% csrf_token %}
-          <button type="submit" onclick="return confirm('Are you sure you want to cancel this order?');" class="js-loading-btn w-full md:w-auto min-h-touch px-4 py-2 text-sm font-semibold text-white bg-brand-red rounded-md hover:bg-brand-redDark transition inline-flex items-center justify-center">
-            Cancel Order
-          </button>
+          {% include "components/_button.html" with label="Cancel Order" variant="danger" icon="x-circle" attrs='onclick="return confirm(&quot;Are you sure you want to cancel this order?&quot;);"' %}
         </form>
       {% endif %}
 
       {% if request.user == order.courier and order.status == 'ACCEPTED' or request.user == order.courier and order.status == 'PICKED_UP' %}
-        <a href="https://www.google.com/maps/dir/?api=1&destination={{ order.dropoff_lat }},{{ order.dropoff_lon }}&travelmode=driving"
-           target="_blank" rel="noopener"
-           class="w-full md:w-auto min-h-touch inline-flex items-center justify-center gap-1 px-4 py-2 text-sm font-medium rounded-md bg-brand-blueDark text-white hover:bg-brand-blueDarkText transition">
-           Navigate to Dropoff
-        </a>
+        {% with lat=order.dropoff_lat|stringformat:"f" lon=order.dropoff_lon|stringformat:"f" %}
+        {% with nav_url="https://www.google.com/maps/dir/?api=1&destination="|add:lat|add:","|add:lon|add:"&travelmode=driving" %}
+          {% include "components/_button.html" with label="Navigate to Dropoff" variant="secondary" icon="navigation" href=nav_url attrs='target="_blank" rel="noopener"' %}
+        {% endwith %}
+        {% endwith %}
       {% endif %}
 
       {% if request.user == order.courier and order.status == 'ACCEPTED' %}
         <form method="post" action="{% url 'courier_pickup' order.id %}" class="w-full md:w-auto">
           {% csrf_token %}
-          <button type="submit" class="js-loading-btn w-full md:w-auto min-h-touch px-4 py-2 text-sm font-semibold text-brand-navy bg-brand-green rounded-md hover:bg-brand-greenDark transition inline-flex items-center justify-center">
-            Mark Picked Up
-          </button>
+          {% include "components/_button.html" with label="Mark Picked Up" variant="primary" icon="package" %}
         </form>
       {% endif %}
 
       {% if request.user == order.courier and order.status == 'PICKED_UP' %}
         <form method="post" action="{% url 'courier_deliver' order.id %}" class="w-full md:w-auto">
           {% csrf_token %}
-          <button type="submit" class="js-loading-btn w-full md:w-auto min-h-touch px-4 py-2 text-sm font-semibold text-brand-navy bg-brand-green rounded-md hover:bg-brand-greenDark transition inline-flex items-center justify-center">
-            Mark Delivered
-          </button>
+          {% include "components/_button.html" with label="Mark Delivered" variant="primary" icon="check-circle" %}
         </form>
       {% endif %}
     </div>

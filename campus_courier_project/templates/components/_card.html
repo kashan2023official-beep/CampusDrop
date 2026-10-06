@@ -1,0 +1,10 @@
+{% comment %}
+Card Component
+Accepts:
+  body_only   (bool, optional — if true, skips the default p-5 padding)
+  class_extra (optional — extra classes appended to the wrapper)
+  content     (html string, rendered safe)
+{% endcomment %}
+<div class="bg-white rounded-2xl shadow-sm {% if not body_only %}p-5{% endif %} {{ class_extra|default:'' }}">
+  {{ content|safe }}
+</div>

@@ -9,37 +9,33 @@
     </div>
   </div>
 
-  <div class="bg-white shadow-sm border border-brand-grey rounded-lg overflow-hidden">
+  <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
     <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-brand-grey text-sm">
-        <thead class="bg-brand-greySubtle text-brand-navySubtext text-xs uppercase font-medium">
+      <table class="w-full">
+        <thead class="bg-brand-greySubtle">
           <tr>
-            <th class="px-6 py-3 text-left">Username</th>
-            <th class="px-6 py-3 text-left">Email</th>
-            <th class="px-6 py-3 text-left">Phone</th>
-            <th class="px-6 py-3 text-left">Role Mode</th>
-            <th class="px-6 py-3 text-left">Permissions</th>
-            <th class="px-6 py-3 text-left">Joined</th>
+            <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Username</th>
+            <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Email</th>
+            <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Phone</th>
+            <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Role Mode</th>
+            <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Permissions</th>
+            <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Joined</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-brand-grey">
+        <tbody>
           {% for u in users %}
-            <tr class="hover:bg-brand-greySubtle transition">
-              <td class="px-6 py-3 font-semibold text-brand-navy">{{ u.username }}</td>
-              <td class="px-6 py-3 text-brand-navySubtext">{{ u.email|default:"—" }}</td>
-              <td class="px-6 py-3 text-brand-navySubtext">{{ u.profile.phone|default:"—" }}</td>
-              <td class="px-6 py-3">
+            <tr class="border-t border-brand-grey hover:bg-brand-greySubtle transition-colors">
+              <td class="px-4 py-3 font-semibold text-sm text-brand-navy">{{ u.username }}</td>
+              <td class="px-4 py-3 text-sm text-brand-navySubtext">{{ u.email|default:"—" }}</td>
+              <td class="px-4 py-3 text-sm text-brand-navySubtext">{{ u.profile.phone|default:"—" }}</td>
+              <td class="px-4 py-3">
                 {% if u.profile.is_courier %}
-                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-brand-green/20 text-brand-greenDarkText">
-                    Courier
-                  </span>
+                  {% include "components/_badge.html" with label="Courier" variant="green" %}
                 {% else %}
-                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-brand-blue/20 text-brand-blueDarkText">
-                    Sender
-                  </span>
+                  {% include "components/_badge.html" with label="Sender" variant="blue" %}
                 {% endif %}
               </td>
-              <td class="px-6 py-3 text-xs">
+              <td class="px-4 py-3 text-sm">
                 {% if u.is_superuser %}
                   <span class="text-brand-purple font-semibold">Superuser</span>
                 {% elif u.is_staff %}
@@ -48,10 +44,10 @@
                   <span class="text-brand-navySubtext">Standard User</span>
                 {% endif %}
               </td>
-              <td class="px-6 py-3 text-brand-navySubtext whitespace-nowrap">{{ u.date_joined|date:"M d, Y" }}</td>
+              <td class="px-4 py-3 text-sm text-brand-navySubtext whitespace-nowrap">{{ u.date_joined|date:"M d, Y" }}</td>
             </tr>
           {% empty %}
-            <tr><td colspan="6" class="px-6 py-6 text-center text-brand-navySubtext">No users found.</td></tr>
+            <tr><td colspan="6" class="px-4 py-6 text-center text-sm text-brand-navySubtext">No users found.</td></tr>
           {% endfor %}
         </tbody>
       </table>

@@ -1,0 +1,40 @@
+{% comment %}
+Button Component
+Accepts:
+  label     (string, required)
+  variant   ('primary' | 'secondary' | 'ghost' | 'danger' — default 'primary')
+  size      ('sm' | 'md' | 'lg' — default 'md')
+  href      (optional — if provided, renders <a> instead of <button>)
+  type      (optional — defaults to 'submit' when no href)
+  icon      (optional — lucide icon name, renders on the left)
+  iconRight (optional — lucide icon name, renders on the right)
+  full      (optional bool — adds w-full)
+  attrs     (optional — extra HTML attributes as a raw string)
+{% endcomment %}
+{% with btn_variant=variant|default:"primary" btn_size=size|default:"md" btn_type=type|default:"submit" %}
+{% if href %}
+<a href="{{ href }}"
+   class="rounded-full font-medium min-h-touch inline-flex items-center justify-center gap-2 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-blueDark focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed {% if full %}w-full{% endif %} {% if btn_variant == 'primary' %}bg-brand-green text-white hover:bg-brand-greenDark active:bg-brand-greenDark{% elif btn_variant == 'secondary' %}bg-white text-brand-navy border border-brand-grey hover:bg-brand-greyLight{% elif btn_variant == 'ghost' %}bg-transparent text-brand-navy hover:bg-brand-greyLight{% elif btn_variant == 'danger' %}bg-brand-red text-white hover:bg-brand-redDark{% endif %} {% if btn_size == 'sm' %}px-3 py-1.5 text-sm{% elif btn_size == 'lg' %}px-5 py-3 text-base{% else %}px-4 py-2.5 text-sm{% endif %}"
+   {{ attrs|default:""|safe }}>
+  {% if icon %}
+    <i data-lucide="{{ icon }}" class="{% if btn_size == 'lg' %}w-5 h-5{% else %}w-4 h-4{% endif %}"></i>
+  {% endif %}
+  <span>{{ label }}</span>
+  {% if iconRight %}
+    <i data-lucide="{{ iconRight }}" class="{% if btn_size == 'lg' %}w-5 h-5{% else %}w-4 h-4{% endif %}"></i>
+  {% endif %}
+</a>
+{% else %}
+<button type="{{ btn_type }}"
+   class="rounded-full font-medium min-h-touch inline-flex items-center justify-center gap-2 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-blueDark focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed {% if full %}w-full{% endif %} {% if btn_variant == 'primary' %}bg-brand-green text-white hover:bg-brand-greenDark active:bg-brand-greenDark{% elif btn_variant == 'secondary' %}bg-white text-brand-navy border border-brand-grey hover:bg-brand-greyLight{% elif btn_variant == 'ghost' %}bg-transparent text-brand-navy hover:bg-brand-greyLight{% elif btn_variant == 'danger' %}bg-brand-red text-white hover:bg-brand-redDark{% endif %} {% if btn_size == 'sm' %}px-3 py-1.5 text-sm{% elif btn_size == 'lg' %}px-5 py-3 text-base{% else %}px-4 py-2.5 text-sm{% endif %}"
+   {{ attrs|default:""|safe }}>
+  {% if icon %}
+    <i data-lucide="{{ icon }}" class="{% if btn_size == 'lg' %}w-5 h-5{% else %}w-4 h-4{% endif %}"></i>
+  {% endif %}
+  <span>{{ label }}</span>
+  {% if iconRight %}
+    <i data-lucide="{{ iconRight }}" class="{% if btn_size == 'lg' %}w-5 h-5{% else %}w-4 h-4{% endif %}"></i>
+  {% endif %}
+</button>
+{% endif %}
+{% endwith %}

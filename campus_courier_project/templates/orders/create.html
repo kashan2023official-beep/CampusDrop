@@ -36,12 +36,12 @@
       <div class="flex items-center justify-between border-b border-brand-greyLight pb-2">
         <h2 class="text-base font-semibold text-brand-navy">Select Locations on Map</h2>
         <div class="space-x-2" id="mode-buttons">
-          <button type="button" data-mode="pickup" class="px-3 py-1.5 text-sm font-medium rounded-md bg-brand-green text-brand-navy shadow-sm hover:bg-brand-greenDark">Set Pickup</button>
+          <button type="button" data-mode="pickup" class="px-3 py-1.5 text-sm font-medium rounded-md bg-brand-green text-white shadow-sm hover:bg-brand-greenDark">Set Pickup</button>
           <button type="button" data-mode="dropoff" class="px-3 py-1.5 text-sm font-medium rounded-md bg-white border border-brand-grey text-brand-navy shadow-sm hover:bg-brand-greySubtle">Set Dropoff</button>
         </div>
       </div>
       
-      <div id="order-map" style="width: 100%; z-index: 1;" class="h-[360px] md:h-[420px] rounded-lg border border-brand-grey mb-4"></div>
+      <div id="order-map" style="width: 100%; z-index: 1;" class="h-[360px] md:h-[420px] rounded-lg border border-brand-grey mb-4 md:mb-0"></div>
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
@@ -97,7 +97,7 @@
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
         </svg>
-        <button id="create-order-submit-btn" type="submit" class="js-loading-btn w-full md:w-auto min-h-touch py-2.5 px-6 text-sm font-semibold text-brand-navy bg-brand-green rounded-md shadow-sm hover:bg-brand-greenDark focus:outline-none focus:ring-2 focus:ring-brand-blueDark transition inline-flex items-center justify-center">
+        <button id="create-order-submit-btn" type="submit" class="js-loading-btn w-full md:w-auto min-h-touch py-2.5 px-6 text-sm font-semibold text-white bg-brand-green rounded-md shadow-sm hover:bg-brand-greenDark focus:outline-none focus:ring-2 focus:ring-brand-blueDark transition inline-flex items-center justify-center">
           Create Order
         </button>
       </div>

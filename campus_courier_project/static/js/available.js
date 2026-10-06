@@ -1,3 +1,6 @@
+// static/js/available.js
+let firstLoad = true;
+
 function getCsrfToken() {
   const input = document.querySelector('[name=csrfmiddlewaretoken]');
   if (input) return input.value;
@@ -7,14 +10,29 @@ function getCsrfToken() {
 
 function renderAvailableOrders(orders) {
   const container = document.getElementById('available-list');
+  const skeleton = document.getElementById('available-skeleton');
+
+  if (firstLoad) {
+    firstLoad = false;
+    if (skeleton) skeleton.classList.add('hidden');
+    if (container) container.classList.remove('hidden');
+  }
+
   if (!container) return;
 
   if (!orders || orders.length === 0) {
     container.innerHTML = `
-      <div class="p-8 text-center bg-white rounded-lg border border-brand-grey text-brand-navySubtext shadow-sm">
-        <p class="text-base font-medium">No pending orders right now. This page refreshes every 5 seconds.</p>
+      <div class="p-8 text-center bg-white rounded-2xl shadow-sm text-brand-navySubtext space-y-2">
+        <div class="w-12 h-12 rounded-full bg-brand-greenTint flex items-center justify-center mx-auto text-brand-greenDarkText mb-2">
+          <i data-lucide="truck" class="w-6 h-6"></i>
+        </div>
+        <p class="text-sm font-medium text-brand-navy">No pending orders right now.</p>
+        <p class="text-xs text-brand-navySubtext">Check again soon. This page refreshes every 5 seconds.</p>
       </div>
     `;
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
     return;
   }
 
@@ -23,39 +41,80 @@ function renderAvailableOrders(orders) {
   container.innerHTML = orders
     .map(
       (order) => `
-    <div class="bg-white p-5 rounded-lg border border-brand-grey shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-      <div class="space-y-1">
-        <div class="flex items-center space-x-2">
-          <span class="font-bold text-brand-navy text-base">#${order.id}</span>
-          <span class="text-xs px-2 py-0.5 rounded-full font-semibold bg-brand-yellow/20 text-brand-yellowDark">Pending</span>
-          <span class="text-xs text-brand-greyDark">&bull; ${order.item_type}</span>
+    <div class="bg-white rounded-2xl shadow-sm p-5 space-y-4">
+      <div class="flex items-start gap-3">
+        <div class="w-12 h-12 rounded-full bg-brand-yellow/20 flex items-center justify-center shrink-0">
+          <i data-lucide="package" class="w-6 h-6 text-brand-yellowDark"></i>
         </div>
-        <div class="text-sm text-brand-navySubtext">
-          <span class="font-medium text-brand-navy">Pickup:</span> ${order.pickup_label || 'Campus Pickup'} &rarr;
-          <span class="font-medium text-brand-navy">Dropoff:</span> ${order.dropoff_label || 'Campus Dropoff'}
-        </div>
-        <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-brand-navySubtext pt-1">
-          <span><strong>Weight:</strong> ${order.weight_kg} kg</span>
-          <span><strong>Distance:</strong> ${order.distance_km} km</span>
-          <span><strong>Fare:</strong> PKR ${order.predicted_fare ? order.predicted_fare.toFixed(0) : 'TBD'}</span>
+        <div class="flex-1 min-w-0">
+          <p class="text-[10px] uppercase tracking-wide text-brand-navySubtext">Pickup</p>
+          <p class="text-sm font-semibold text-brand-navy truncate">${order.pickup_label || 'Campus Pickup'}</p>
+          <p class="text-[10px] uppercase tracking-wide text-brand-navySubtext mt-2">Dropoff</p>
+          <p class="text-sm font-semibold text-brand-navy truncate">${order.dropoff_label || 'Campus Dropoff'}</p>
         </div>
       </div>
-      <div>
-        <form method="post" action="/courier/accept/${order.id}/" class="inline">
-          <input type="hidden" name="csrfmiddlewaretoken" value="${csrfToken}">
-          <button type="submit" class="js-loading-btn w-full md:w-auto min-h-touch px-5 py-2 text-sm font-semibold text-brand-navy bg-brand-green rounded-md shadow-sm hover:bg-brand-greenDark transition inline-flex items-center justify-center">
-            Accept Order
-          </button>
-        </form>
+      <div class="grid grid-cols-3 gap-3 pt-3 border-t border-brand-grey text-xs">
+        <div>
+          <p class="text-[10px] uppercase text-brand-navySubtext">Fare</p>
+          <p class="font-semibold text-brand-navy">Rs ${order.predicted_fare ? order.predicted_fare.toFixed(0) : '0'}</p>
+        </div>
+        <div>
+          <p class="text-[10px] uppercase text-brand-navySubtext">Distance</p>
+          <p class="font-semibold text-brand-navy">${order.distance_km ? order.distance_km.toFixed(1) : '0.0'} km</p>
+        </div>
+        <div>
+          <p class="text-[10px] uppercase text-brand-navySubtext">Weight</p>
+          <p class="font-semibold text-brand-navy">${order.weight_kg} kg</p>
+        </div>
       </div>
+      <form method="post" action="/courier/accept/${order.id}/">
+        <input type="hidden" name="csrfmiddlewaretoken" value="${csrfToken}">
+        <button type="submit"
+                class="js-loading-btn w-full py-3 rounded-full bg-brand-green text-white text-sm font-medium
+                       active:scale-[0.98] transition-transform hover:bg-brand-greenDark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2">
+          Accept Order
+        </button>
+      </form>
     </div>
   `
     )
     .join('');
+
+  if (window.lucide) {
+    window.lucide.createIcons();
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   const container = document.getElementById('available-list');
+  const skeleton = document.getElementById('available-skeleton');
+
+  if (container && skeleton) {
+    skeleton.classList.remove('hidden');
+    container.classList.add('hidden');
+  }
+
+  // Fetch immediately on initial load
+  fetch('/courier/available/json/', {
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'Accept': 'application/json',
+    },
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    })
+    .then((data) => renderAvailableOrders(data))
+    .catch((err) => {
+      console.warn('Initial orders fetch failed:', err);
+      if (firstLoad) {
+        firstLoad = false;
+        if (skeleton) skeleton.classList.add('hidden');
+        if (container) container.classList.remove('hidden');
+      }
+    });
+
   if (container && typeof pollEvery === 'function') {
     pollEvery('/courier/available/json/', 5000, renderAvailableOrders);
   }

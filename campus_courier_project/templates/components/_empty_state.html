@@ -1,0 +1,22 @@
+{% comment %}
+Empty State Component
+Accepts:
+  icon   (lucide icon name, e.g. "package-open", "inbox")
+  title  (string, required)
+  body   (optional string)
+  action (optional — HTML string for button, rendered safe)
+{% endcomment %}
+<div class="flex flex-col items-center justify-center text-center p-8">
+  <div class="w-14 h-14 rounded-full bg-brand-greenTint flex items-center justify-center text-brand-greenDarkText mb-4">
+    <i data-lucide="{{ icon|default:'inbox' }}" class="w-7 h-7"></i>
+  </div>
+  <h3 class="text-base font-bold text-brand-navy">{{ title }}</h3>
+  {% if body %}
+  <p class="text-sm text-brand-navySubtext mt-1 max-w-sm">{{ body }}</p>
+  {% endif %}
+  {% if action %}
+  <div class="mt-4">
+    {{ action|safe }}
+  </div>
+  {% endif %}
+</div>

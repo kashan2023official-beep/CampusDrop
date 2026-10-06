@@ -1,0 +1,44 @@
+{% comment %}
+Bottom Sheet Component (Alpine.js)
+Accepts:
+  name    (required — unique identifier for Alpine state and window events)
+  title   (optional)
+  size    ('sm' | 'md' | 'lg' — default 'md')
+  content (safe HTML)
+{% endcomment %}
+{% with sheet_size=size|default:"md" %}
+<div x-data="{ {{ name }}Open: false }"
+     @open-{{ name }}.window="{{ name }}Open = true"
+     @close-{{ name }}.window="{{ name }}Open = false"
+     x-cloak>
+
+  <!-- backdrop -->
+  <div x-show="{{ name }}Open"
+       x-transition.opacity.duration.200ms
+       @click="{{ name }}Open = false"
+       class="fixed inset-0 bg-brand-navy/40 z-40"></div>
+
+  <!-- sheet -->
+  <div x-show="{{ name }}Open"
+       x-transition:enter="transition ease-out duration-300"
+       x-transition:enter-start="translate-y-full"
+       x-transition:enter-end="translate-y-0"
+       x-transition:leave="transition ease-in duration-200"
+       x-transition:leave-start="translate-y-0"
+       x-transition:leave-end="translate-y-full"
+       class="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl shadow-xl md:inset-auto md:right-6 md:bottom-6 md:w-[420px] md:rounded-3xl pb-[env(safe-area-inset-bottom)] {% if sheet_size == 'sm' %}max-h-[40vh]{% elif sheet_size == 'lg' %}max-h-[90vh]{% else %}max-h-[70vh]{% endif %}">
+    <div class="w-12 h-1.5 bg-brand-grey rounded-full mx-auto mt-3 md:hidden"></div>
+    {% if title %}
+    <div class="px-5 pt-4 pb-2 flex items-center justify-between">
+      <h3 class="text-lg font-semibold text-brand-navy">{{ title }}</h3>
+      <button @click="{{ name }}Open = false" type="button" aria-label="Close" class="p-1 text-brand-navySubtext hover:text-brand-navy transition">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+    </div>
+    {% endif %}
+    <div class="px-5 pb-6 pt-2 overflow-y-auto {% if sheet_size == 'sm' %}max-h-[calc(40vh-4rem)]{% elif sheet_size == 'lg' %}max-h-[calc(90vh-4rem)]{% else %}max-h-[calc(70vh-4rem)]{% endif %}">
+      {{ content|safe }}
+    </div>
+  </div>
+</div>
+{% endwith %}

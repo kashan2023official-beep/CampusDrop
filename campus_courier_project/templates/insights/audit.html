@@ -9,33 +9,33 @@
     </div>
   </div>
 
-  <div class="bg-white shadow-sm border border-brand-grey rounded-lg overflow-hidden">
+  <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
     <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-brand-grey text-sm">
-        <thead class="bg-brand-greySubtle text-brand-navySubtext text-xs uppercase font-medium">
+      <table class="w-full">
+        <thead class="bg-brand-greySubtle">
           <tr>
-            <th class="px-6 py-3 text-left">Timestamp</th>
-            <th class="px-6 py-3 text-left">Actor</th>
-            <th class="px-6 py-3 text-left">Action</th>
-            <th class="px-6 py-3 text-left">Target Type</th>
-            <th class="px-6 py-3 text-left">Target ID</th>
-            <th class="px-6 py-3 text-left">IP Address</th>
-            <th class="px-6 py-3 text-left">Metadata</th>
+            <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Timestamp</th>
+            <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Actor</th>
+            <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Action</th>
+            <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Target Type</th>
+            <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Target ID</th>
+            <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">IP Address</th>
+            <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Metadata</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-brand-grey">
+        <tbody>
           {% for log in audits %}
-            <tr class="hover:bg-brand-greySubtle transition">
-              <td class="px-6 py-3 text-brand-navySubtext whitespace-nowrap">{{ log.created_at|date:"M d, H:i:s" }}</td>
-              <td class="px-6 py-3 font-medium text-brand-navy">{{ log.actor.username|default:"System" }}</td>
-              <td class="px-6 py-3 text-brand-blueDarkText font-mono text-xs">{{ log.action }}</td>
-              <td class="px-6 py-3 text-brand-navySubtext">{{ log.target_type }}</td>
-              <td class="px-6 py-3 text-brand-navy font-semibold">#{{ log.target_id }}</td>
-              <td class="px-6 py-3 text-brand-navySubtext font-mono text-xs">{{ log.ip_address|default:"—" }}</td>
-              <td class="px-6 py-3 text-brand-navySubtext text-xs font-mono max-w-xs truncate">{{ log.metadata }}</td>
+            <tr class="border-t border-brand-grey hover:bg-brand-greySubtle transition-colors">
+              <td class="px-4 py-3 text-sm text-brand-navySubtext whitespace-nowrap">{{ log.created_at|date:"M d, H:i:s" }}</td>
+              <td class="px-4 py-3 font-medium text-sm text-brand-navy">{{ log.actor.username|default:"System" }}</td>
+              <td class="px-4 py-3 text-brand-blueDarkText font-mono text-xs">{{ log.action }}</td>
+              <td class="px-4 py-3 text-sm text-brand-navySubtext">{{ log.target_type }}</td>
+              <td class="px-4 py-3 text-sm text-brand-navy font-semibold">#{{ log.target_id }}</td>
+              <td class="px-4 py-3 text-brand-navySubtext font-mono text-xs">{{ log.ip_address|default:"—" }}</td>
+              <td class="px-4 py-3 text-sm text-brand-navySubtext font-mono max-w-xs truncate">{{ log.metadata }}</td>
             </tr>
           {% empty %}
-            <tr><td colspan="7" class="px-6 py-6 text-center text-brand-navySubtext">No audit logs recorded yet.</td></tr>
+            <tr><td colspan="7" class="px-4 py-6 text-center text-sm text-brand-navySubtext">No audit logs recorded yet.</td></tr>
           {% endfor %}
         </tbody>
       </table>

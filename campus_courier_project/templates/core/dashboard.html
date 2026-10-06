@@ -18,7 +18,7 @@
       <form method="post" action="{% url 'toggle_role' %}" class="inline w-full">
         {% csrf_token %}
         <input type="hidden" name="next" value="{% url 'dashboard' %}">
-        <button type="submit" class="w-full md:w-auto min-h-touch inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-brand-navy bg-brand-greyLight border border-brand-grey rounded-md hover:bg-brand-grey transition">
+        <button type="submit" class="js-loading-btn w-full md:w-auto min-h-touch inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-brand-navy bg-brand-greyLight border border-brand-grey rounded-md hover:bg-brand-grey transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2">
           Switch to {% if current_mode == 'courier' %}Sender{% else %}Courier{% endif %} Mode
         </button>
       </form>
@@ -26,31 +26,225 @@
   </div>
 
   {% if current_mode == 'sender' %}
-    <div class="bg-white p-6 rounded-lg shadow-sm border border-brand-grey space-y-4">
-      <h2 class="text-lg font-semibold text-brand-navy">Sender Actions</h2>
-      <p class="text-sm text-brand-navySubtext">Easily create new delivery requests across UET Lahore or view existing dispatches.</p>
-      <div class="flex flex-col sm:flex-row gap-4 pt-2">
-        <a href="{% url 'order_create' %}" class="w-full sm:w-auto min-h-touch inline-flex items-center justify-center px-4 py-2.5 text-sm font-semibold text-brand-navy bg-brand-green rounded-md shadow-sm hover:bg-brand-greenDark transition">
-          Create Order
-        </a>
-        <a href="{% url 'order_list' %}" class="w-full sm:w-auto min-h-touch inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-brand-navy bg-brand-greyLight border border-brand-grey rounded-md hover:bg-brand-grey transition">
-          My Orders
-        </a>
+    {% if not request.user.sent_orders.all %}
+      <!-- 1. Hero card (only if user has zero orders) -->
+      <div class="bg-white rounded-2xl shadow-sm p-6 sm:p-8">
+        {% url 'order_create' as create_url %}
+        {% include "components/_empty_state.html" with icon="package-plus" title="Send your first parcel" body="Create a delivery request and a courier will pick it up." %}
+        <div class="mt-6 max-w-sm mx-auto">
+          {% include "components/_button.html" with label="Send a Parcel" href=create_url full=True size="lg" %}
+        </div>
       </div>
-    </div>
+    {% else %}
+      <div class="space-y-6">
+        <!-- 2. Active Deliveries section (if any PENDING, ACCEPTED, or PICKED_UP orders) -->
+        <section x-data="{ count: 0 }"
+                 x-init="count = $refs.activeContainer ? $refs.activeContainer.querySelectorAll('a').length : 0"
+                 x-show="count > 0"
+                 class="space-y-4 has-[a]:block hidden">
+          <h2 class="text-base font-bold text-brand-navy">Active Deliveries</h2>
+          <div x-ref="activeContainer" class="space-y-4 [&>a:nth-of-type(n+4)]:hidden">
+            {% for order in request.user.sent_orders.all %}
+              {% if order.status == 'PENDING' or order.status == 'ACCEPTED' or order.status == 'PICKED_UP' %}
+                <a href="{% url 'order_detail' order.id %}" class="block rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2">
+                  <div class="bg-white rounded-2xl shadow-sm p-5 flex items-center gap-4 hover:shadow-md transition">
+                    <div class="w-12 h-12 rounded-full bg-brand-greenTint flex items-center justify-center shrink-0">
+                      <i data-lucide="package" class="w-6 h-6 text-brand-greenDarkText"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-sm font-semibold text-brand-navy truncate">{{ order.pickup_label|default:"Campus Pickup" }}</p>
+                      <p class="text-xs text-brand-navySubtext truncate">to {{ order.dropoff_label|default:"Campus Dropoff" }}</p>
+                      <p class="text-xs text-brand-navySubtext mt-0.5">{{ order.get_item_type_display|default:order.item_type }} · {{ order.weight_kg }} kg</p>
+                    </div>
+                    <div class="text-right shrink-0">
+                      <p class="text-sm font-bold text-brand-navy">Rs {{ order.predicted_fare|floatformat:0 }}</p>
+                      {% if order.status == 'PENDING' %}
+                        {% include "components/_badge.html" with label=order.get_status_display variant="yellow" %}
+                      {% elif order.status == 'ACCEPTED' %}
+                        {% include "components/_badge.html" with label=order.get_status_display variant="blue" %}
+                      {% elif order.status == 'PICKED_UP' %}
+                        {% include "components/_badge.html" with label=order.get_status_display variant="purple" %}
+                      {% endif %}
+                    </div>
+                  </div>
+                </a>
+              {% endif %}
+            {% endfor %}
+          </div>
+          <div x-show="count > 3" class="pt-1">
+            <a href="{% url 'order_list' %}" class="text-brand-greenDarkText text-sm font-medium hover:underline inline-flex items-center gap-1">
+              View all orders &rarr;
+            </a>
+          </div>
+        </section>
+
+        <!-- 3. Recent Deliveries section (DELIVERED and CANCELLED, limit 3) -->
+        <section x-data="{ count: 0 }"
+                 x-init="count = $refs.recentContainer ? $refs.recentContainer.querySelectorAll('a').length : 0"
+                 x-show="count > 0"
+                 class="space-y-4 has-[a]:block hidden">
+          <h2 class="text-base font-bold text-brand-navy">Recent Deliveries</h2>
+          <div x-ref="recentContainer" class="space-y-4 [&>a:nth-of-type(n+4)]:hidden">
+            {% for order in request.user.sent_orders.all %}
+              {% if order.status == 'DELIVERED' or order.status == 'CANCELLED' %}
+                <a href="{% url 'order_detail' order.id %}" class="block rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2">
+                  <div class="bg-white rounded-2xl shadow-sm p-5 flex items-center gap-4 hover:shadow-md transition">
+                    {% if order.status == 'DELIVERED' %}
+                      <div class="w-12 h-12 rounded-full bg-brand-greenSoft flex items-center justify-center shrink-0">
+                        <i data-lucide="package-check" class="w-6 h-6 text-brand-greenDarkText"></i>
+                      </div>
+                    {% else %}
+                      <div class="w-12 h-12 rounded-full bg-brand-red/10 flex items-center justify-center shrink-0">
+                        <i data-lucide="package-x" class="w-6 h-6 text-brand-redDarkText"></i>
+                      </div>
+                    {% endif %}
+                    <div class="flex-1 min-w-0">
+                      <p class="text-sm font-semibold text-brand-navy truncate">{{ order.pickup_label|default:"Campus Pickup" }}</p>
+                      <p class="text-xs text-brand-navySubtext truncate">to {{ order.dropoff_label|default:"Campus Dropoff" }}</p>
+                      <p class="text-xs text-brand-navySubtext mt-0.5">{{ order.get_item_type_display|default:order.item_type }} · {{ order.weight_kg }} kg</p>
+                    </div>
+                    <div class="text-right shrink-0">
+                      <p class="text-sm font-bold text-brand-navy">Rs {{ order.predicted_fare|floatformat:0 }}</p>
+                      {% if order.status == 'DELIVERED' %}
+                        {% include "components/_badge.html" with label=order.get_status_display variant="green" %}
+                      {% else %}
+                        {% include "components/_badge.html" with label=order.get_status_display variant="red" %}
+                      {% endif %}
+                    </div>
+                  </div>
+                </a>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </section>
+
+        <!-- 4. Big CTA at bottom (only if user has 1+ orders) -->
+        <div class="pt-2">
+          {% url 'order_create' as create_url %}
+          {% include "components/_button.html" with label="Send a Parcel" href=create_url full=True icon="package-plus" size="lg" %}
+        </div>
+      </div>
+    {% endif %}
   {% else %}
-    <div class="bg-white p-6 rounded-lg shadow-sm border border-brand-grey space-y-4">
-      <h2 class="text-lg font-semibold text-brand-navy">Courier Feed & Jobs</h2>
-      <p class="text-sm text-brand-navySubtext">Pick up active parcel orders across UET Lahore or manage your accepted delivery runs.</p>
-      <div class="flex flex-col sm:flex-row gap-4 pt-2">
-        <a href="{% url 'courier_available' %}" class="w-full sm:w-auto min-h-touch inline-flex items-center justify-center px-4 py-2.5 text-sm font-semibold text-brand-navy bg-brand-green rounded-md shadow-sm hover:bg-brand-greenDark transition">
-          Browse Available Orders
-        </a>
-        <a href="{% url 'courier_jobs' %}" class="w-full sm:w-auto min-h-touch inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-brand-navy bg-brand-greyLight border border-brand-grey rounded-md hover:bg-brand-grey transition">
-          My Jobs
-        </a>
+    {% load courier_stats %}
+    {% courier_stats request.user as stats %}
+
+    {% if stats.active_count == 0 and stats.available_count == 0 and stats.delivered_count == 0 %}
+      <!-- 4. Zero active AND zero available AND zero delivered: full hero empty state -->
+      <div class="bg-white rounded-2xl shadow-sm p-6 sm:p-8">
+        {% url 'courier_available' as avail_url %}
+        {% include "components/_empty_state.html" with icon="truck" title="Ready to start delivering" body="Accept your first order to get going." %}
+        <div class="mt-6 max-w-sm mx-auto">
+          {% include "components/_button.html" with label="Browse Available Orders" href=avail_url full=True icon="package" size="lg" %}
+        </div>
       </div>
-    </div>
+    {% else %}
+      <div class="space-y-6">
+        <!-- 1. Stats row at top (3 mini-cards in a grid) -->
+        <div class="grid grid-cols-3 gap-3">
+          <!-- Available -->
+          <div class="bg-white rounded-2xl shadow-sm p-4 text-center">
+            <p class="text-2xl font-bold text-brand-navy">{{ stats.available_count }}</p>
+            <p class="text-[10px] uppercase tracking-wide text-brand-navySubtext mt-1">Available</p>
+          </div>
+          <!-- Active -->
+          <div class="bg-white rounded-2xl shadow-sm p-4 text-center">
+            <p class="text-2xl font-bold text-brand-navy">{{ stats.active_count }}</p>
+            <p class="text-[10px] uppercase tracking-wide text-brand-navySubtext mt-1">Active</p>
+          </div>
+          <!-- Delivered -->
+          <div class="bg-white rounded-2xl shadow-sm p-4 text-center">
+            <p class="text-2xl font-bold text-brand-navy">{{ stats.delivered_count }}</p>
+            <p class="text-[10px] uppercase tracking-wide text-brand-navySubtext mt-1">Delivered</p>
+          </div>
+        </div>
+
+        <!-- 2. Active Job section (if the courier has any ACCEPTED or PICKED_UP orders) -->
+        {% if stats.active_job %}
+          <section class="space-y-3">
+            <h2 class="text-base font-bold text-brand-navy">Active Job</h2>
+            <div class="bg-white rounded-2xl shadow-sm p-5 space-y-4">
+              <div class="flex items-start gap-3">
+                <div class="w-12 h-12 rounded-full bg-brand-greenTint flex items-center justify-center shrink-0">
+                  <i data-lucide="truck" class="w-6 h-6 text-brand-greenDarkText"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-xs text-brand-navySubtext">Active Job</p>
+                  <p class="text-sm font-semibold text-brand-navy truncate">{{ stats.active_job.pickup_label|default:"Campus Pickup" }}</p>
+                  <p class="text-xs text-brand-navySubtext truncate">to {{ stats.active_job.dropoff_label|default:"Campus Dropoff" }}</p>
+                </div>
+                {% if stats.active_job.status == 'ACCEPTED' %}
+                  {% include "components/_badge.html" with label=stats.active_job.get_status_display variant="blue" %}
+                {% elif stats.active_job.status == 'PICKED_UP' %}
+                  {% include "components/_badge.html" with label=stats.active_job.get_status_display variant="purple" %}
+                {% endif %}
+              </div>
+              <div class="grid grid-cols-2 gap-3 pt-3 border-t border-brand-grey text-xs">
+                <div>
+                  <p class="text-[10px] uppercase text-brand-navySubtext">Fare</p>
+                  <p class="font-semibold text-brand-navy">Rs {{ stats.active_job.predicted_fare|floatformat:0 }}</p>
+                </div>
+                <div>
+                  <p class="text-[10px] uppercase text-brand-navySubtext">Weight</p>
+                  <p class="font-semibold text-brand-navy">{{ stats.active_job.weight_kg }} kg</p>
+                </div>
+              </div>
+              <div class="flex gap-2 pt-1">
+                <a href="{% url 'order_detail' stats.active_job.id %}"
+                   class="flex-1 text-center py-2.5 rounded-full bg-brand-green text-white text-sm font-medium hover:bg-brand-greenDark transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2">
+                  Continue
+                </a>
+                <a href="https://www.google.com/maps/dir/?api=1&destination={{ stats.active_job.dropoff_lat }},{{ stats.active_job.dropoff_lon }}&travelmode=driving"
+                   target="_blank" rel="noopener" title="Navigate to Dropoff"
+                   class="w-11 h-11 rounded-full bg-brand-greyLight text-brand-navy hover:bg-brand-grey transition flex items-center justify-center shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2">
+                  <i data-lucide="navigation" class="w-5 h-5"></i>
+                </a>
+              </div>
+            </div>
+          </section>
+        {% endif %}
+
+        <!-- 3. Available Orders section -->
+        <section class="space-y-3">
+          <div class="flex items-center justify-between">
+            <h2 class="text-base font-bold text-brand-navy">Available Orders</h2>
+            <a href="{% url 'courier_available' %}" class="text-xs font-medium text-brand-greenDarkText hover:underline">
+              Browse all &rarr;
+            </a>
+          </div>
+
+          {% if stats.available_orders %}
+            <div class="space-y-3">
+              {% for order in stats.available_orders %}
+                <a href="{% url 'courier_available' %}" class="block rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2">
+                  <div class="bg-white rounded-2xl shadow-sm p-4 flex items-center gap-3 hover:shadow-md transition">
+                    <div class="w-10 h-10 rounded-full bg-brand-yellow/20 flex items-center justify-center shrink-0">
+                      <i data-lucide="package" class="w-5 h-5 text-brand-yellowDark"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-sm font-semibold text-brand-navy truncate">{{ order.pickup_label|default:"Campus Pickup" }}</p>
+                      <p class="text-xs text-brand-navySubtext truncate">to {{ order.dropoff_label|default:"Campus Dropoff" }}</p>
+                    </div>
+                    <div class="text-right shrink-0">
+                      <p class="text-sm font-bold text-brand-navy">Rs {{ order.predicted_fare|floatformat:0 }}</p>
+                      <p class="text-[10px] text-brand-navySubtext">{{ order.distance_km|floatformat:1 }} km</p>
+                    </div>
+                  </div>
+                </a>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="text-sm text-brand-navySubtext py-2">No pending orders right now. Check again soon.</p>
+          {% endif %}
+        </section>
+
+        <!-- Bottom CTA -->
+        <div class="pt-2">
+          {% url 'courier_available' as avail_url %}
+          {% include "components/_button.html" with label="Browse Available Orders" href=avail_url full=True icon="package" size="lg" %}
+        </div>
+      </div>
+    {% endif %}
   {% endif %}
 </div>
 {% endblock %}

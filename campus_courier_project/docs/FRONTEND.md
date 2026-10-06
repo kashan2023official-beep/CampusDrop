@@ -108,3 +108,29 @@ Generic `pollEvery(url, ms, onData)` helper using `fetch`.
 ## Responsive
 - Mobile-first. Navbar collapses on small screens.
 - Map and forms stack vertically under `md:` breakpoint.
+
+---
+
+## Phase 13A: Design System Foundation
+
+### Refined Color Tokens
+- `brand.green`: `#22C55E` (primary CTA green)
+- `brand.greenDark`: `#16A34A` (hover / pressed state)
+- `brand.greenLight`: `#4ADE80` (accents)
+- `brand.greenDarkText`: `#15803D` (text on soft green backgrounds)
+- `brand.greenTint`: `#F0FDF4` (very soft background for icon circles)
+- `brand.greenSoft`: `#DCFCE7` (soft chip and badge background)
+- All CTA buttons with `bg-brand-green` use `text-white` for optimal contrast.
+
+### UI Libraries
+- **Alpine.js (v3 CDN)**: Loaded in `base.html` head with `[x-cloak]` display rule for lightweight reactive components and sheets.
+- **Lucide Icons (CDN)**: Loaded via unpkg, automatically initialized with `lucide.createIcons()` and monitored via DOM MutationObserver.
+
+### Reusable Template Components (`templates/components/`)
+1. `_button.html`: Reusable button/link component supporting `primary`, `secondary`, `ghost`, `danger` variants, `sm`, `md`, `lg` sizes, Lucide icons (`icon`, `iconRight`), and full width.
+2. `_card.html`: Clean container with `rounded-2xl`, `shadow-sm`, and optional `body_only` padding override.
+3. `_badge.html`: Semantic badge chips supporting `green`, `yellow`, `blue`, `purple`, `red`, and `grey` colorways.
+4. `_input.html`: Standardized text input field with optional label, leading Lucide icon, helper text, error text, and required flags.
+5. `_sheet.html`: Alpine-driven mobile bottom sheet and desktop slide-over panel with backdrop, transition animations, and header controls.
+6. `_empty_state.html`: Centered placeholder view featuring a green-tinted circular icon badge, title, descriptive text, and optional action button.
+

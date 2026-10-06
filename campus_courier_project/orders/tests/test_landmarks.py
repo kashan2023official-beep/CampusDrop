@@ -33,8 +33,8 @@ def test_describe_location_returns_landmark_name():
 
 
 def test_describe_location_falls_back_to_coords():
-    # 31.5825, 74.3525 is in the NW corner of the campus bounds, >150m away from landmarks
-    label, source = describe_location(31.5825, 74.3525)
+    # 31.5500, 74.3200 is in the SW area of the campus bounds, >150m away from landmarks
+    label, source = describe_location(31.5500, 74.3200)
     assert source == 'coords'
     assert ',' in label
 
@@ -81,8 +81,8 @@ def test_reverse_geocode_rejects_bad_types(client, sender_user):
 def test_find_nearest_landmark_at_120m_still_matches():
     """An offset of ~111m should still match since threshold is 150m."""
     L = CAMPUS_LANDMARKS[1]
-    # +0.001 lat is ~111 meters north
-    r = find_nearest_landmark(L['lat'] + 0.001, L['lon'])
+    # -0.001 lat is ~111 meters south
+    r = find_nearest_landmark(L['lat'] - 0.001, L['lon'])
     assert r is not None
     assert r['name'] == L['name']
 

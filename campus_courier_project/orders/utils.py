@@ -2,12 +2,12 @@ import math
 
 CAMPUS_CENTER = (31.579761694261773, 74.35494969618985)
 
-# Bounding box roughly 450 m in each direction around the campus center
+# Bounding box approximating a 5 km radius around the campus center
 CAMPUS_BOUNDS = {
-    "south": 31.5757,
-    "north": 31.5838,
-    "west":  74.3507,
-    "east":  74.3592,
+    "south": 31.5348,
+    "north": 31.6247,
+    "west":  74.3022,
+    "east":  74.4077,
 }
 
 

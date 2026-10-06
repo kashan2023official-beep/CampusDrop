@@ -13,28 +13,50 @@
       <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-brand-purple/15 text-brand-purple">
         Staff Mode
       </span>
-      <a href="/admin/" class="px-3 py-1.5 text-xs font-medium text-brand-navy bg-white border border-brand-grey rounded-md hover:bg-brand-greySubtle transition">
+      <a href="/admin/" class="px-3 py-1.5 text-xs font-medium text-brand-navy bg-white border border-brand-grey rounded-md hover:bg-brand-greySubtle transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2">
         Django Admin &rarr;
       </a>
     </div>
   </div>
 
   <!-- Navigation Tabs -->
-  <div class="border-b border-brand-grey overflow-x-auto">
-    <nav class="-mb-px flex space-x-8 min-w-max" aria-label="Tabs">
-      <a href="{% url 'insights_dashboard' %}" class="{% if request.resolver_match.url_name == 'insights_dashboard' %}border-brand-blueDark text-brand-blueDarkText{% else %}border-transparent text-brand-navySubtext hover:text-brand-navy hover:border-brand-grey{% endif %} whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm">
-        Dashboard Overview
-      </a>
-      <a href="{% url 'insights_orders' %}" class="{% if request.resolver_match.url_name == 'insights_orders' %}border-brand-blueDark text-brand-blueDarkText{% else %}border-transparent text-brand-navySubtext hover:text-brand-navy hover:border-brand-grey{% endif %} whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm">
-        All Orders
-      </a>
-      <a href="{% url 'insights_users' %}" class="{% if request.resolver_match.url_name == 'insights_users' %}border-brand-blueDark text-brand-blueDarkText{% else %}border-transparent text-brand-navySubtext hover:text-brand-navy hover:border-brand-grey{% endif %} whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm">
-        Campus Users
-      </a>
-      <a href="{% url 'insights_audit' %}" class="{% if request.resolver_match.url_name == 'insights_audit' %}border-brand-blueDark text-brand-blueDarkText{% else %}border-transparent text-brand-navySubtext hover:text-brand-navy hover:border-brand-grey{% endif %} whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm">
-        Audit Log
-      </a>
-    </nav>
+  <div class="flex gap-2 mb-6 overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
+    <a href="{% url 'insights_dashboard' %}"
+       class="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2
+              {% if request.resolver_match.url_name == 'insights_dashboard' %}
+                bg-brand-green text-white
+              {% else %}
+                bg-white text-brand-navy hover:bg-brand-greyLight border border-brand-grey
+              {% endif %}">
+      Dashboard
+    </a>
+    <a href="{% url 'insights_orders' %}"
+       class="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2
+              {% if request.resolver_match.url_name == 'insights_orders' %}
+                bg-brand-green text-white
+              {% else %}
+                bg-white text-brand-navy hover:bg-brand-greyLight border border-brand-grey
+              {% endif %}">
+      All Orders
+    </a>
+    <a href="{% url 'insights_users' %}"
+       class="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2
+              {% if request.resolver_match.url_name == 'insights_users' %}
+                bg-brand-green text-white
+              {% else %}
+                bg-white text-brand-navy hover:bg-brand-greyLight border border-brand-grey
+              {% endif %}">
+      Campus Users
+    </a>
+    <a href="{% url 'insights_audit' %}"
+       class="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2
+              {% if request.resolver_match.url_name == 'insights_audit' %}
+                bg-brand-green text-white
+              {% else %}
+                bg-white text-brand-navy hover:bg-brand-greyLight border border-brand-grey
+              {% endif %}">
+      Audit Log
+    </a>
   </div>
 
   {% block insights_content %}{% endblock %}

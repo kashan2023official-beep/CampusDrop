@@ -1,0 +1,40 @@
+{% comment %}
+Input Component
+Accepts:
+  name        (required)
+  label       (optional — renders a small label above)
+  type        (default 'text')
+  value       (optional)
+  placeholder (optional)
+  icon        (optional — lucide icon name, renders inside the input on the left)
+  hint        (optional — small helper text below)
+  error       (optional — small red text below)
+  required    (optional bool)
+{% endcomment %}
+<div class="space-y-1.5">
+  {% if label %}
+  <label for="id_{{ name }}" class="block text-sm font-medium text-brand-navy">{{ label }}</label>
+  {% endif %}
+  <div class="relative">
+    {% if icon %}
+    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-brand-navySubtext pointer-events-none flex items-center justify-center">
+      <i data-lucide="{{ icon }}" class="w-5 h-5"></i>
+    </span>
+    {% endif %}
+    <input
+      type="{{ type|default:'text' }}"
+      name="{{ name }}"
+      id="id_{{ name }}"
+      value="{{ value|default:'' }}"
+      placeholder="{{ placeholder|default:'' }}"
+      {% if required %}required{% endif %}
+      class="w-full rounded-full border border-brand-grey bg-white px-4 py-3 text-brand-navy placeholder:text-brand-navySubtext focus:outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-green/30 {% if icon %}pl-12{% endif %} {% if error %}border-brand-red{% endif %}"
+    >
+  </div>
+  {% if hint and not error %}
+  <p class="text-xs text-brand-navySubtext">{{ hint }}</p>
+  {% endif %}
+  {% if error %}
+  <p class="text-xs text-brand-redDarkText">{{ error }}</p>
+  {% endif %}
+</div>

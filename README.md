@@ -85,10 +85,10 @@ The platform restricts orders to the perimeter of **UET Lahore Main Campus**:
 
 - **Campus Center**: `31.579762° N, 74.354950° E`
 - **Geographic Bounding Box**:
-  - **North**: `31.5838° N`
-  - **South**: `31.5757° N`
-  - **West**: `74.3507° E`
-  - **East**: `74.3592° E`
+  - **North**: `31.6247° N`
+  - **South**: `31.5348° N`
+  - **West**: `74.3022° E`
+  - **East**: `74.4077° E`
 
 Coordinates are dynamically served via `/api/campus-bounds/` to ensure single-source-of-truth alignment between Leaflet maps and Django form validators.
 
@@ -288,7 +288,7 @@ All demo accounts share the password: **`DemoPass123!`**
   ```json
   {
     "center": [31.579761694261773, 74.35494969618985],
-    "bounds": [[31.575, 74.352], [31.583, 74.36]]
+    "bounds": [[31.5348, 74.3022], [31.6247, 74.4077]]
   }
   ```
 
