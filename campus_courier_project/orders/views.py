@@ -15,6 +15,7 @@ from .models import Order, Rating, CancelReason
 from .services import transition
 from .utils import CAMPUS_BOUNDS, CAMPUS_CENTER, compute_distance, is_inside_campus
 from ml_engine.predictor import predict_fare
+from ml_engine.demand_hotspots import compute_hotspots, hotspots_available
 
 
 class DashboardView(LoginRequiredMixin, TemplateView):
@@ -245,4 +246,13 @@ def reverse_geocode_view(request):
 
     label, source = describe_location(lat, lon)
     return JsonResponse({"label": label, "source": source})
+
+
+@login_required
+@require_GET
+def hotspots_view(request):
+    if not hotspots_available():
+        return JsonResponse({'available': False, 'hotspots': []})
+    hotspots = compute_hotspots()
+    return JsonResponse({'available': True, 'hotspots': hotspots})
 

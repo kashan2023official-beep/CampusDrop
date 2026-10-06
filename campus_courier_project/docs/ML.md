@@ -85,8 +85,14 @@ Prints MAE and saves `fare_model.joblib`.
 - Model file is versioned with a `ml_engine/fare_model.meta.json` recording: training date, sample count, MAE, feature list.
 - Retrain when formula or features change.
 
+## DBSCAN Hotspots
+- Unsupervised Spatial Clustering using DBSCAN is used to detect historical demand hotspots (areas with frequent pickups).
+- Uses `eps_km=0.15` (150 meters) and `min_samples=4`.
+- The haversine metric is used for accurate geographical distance calculation.
+- Hotspots are displayed on the courier available map and insights dashboard.
+- A cluster is defined by at least `min_samples` orders within an `eps_km` radius.
+
 ## Not in v1
-- DBSCAN hotspots
 - Bid acceptance classifier
 - Deep learning
 - Online learning

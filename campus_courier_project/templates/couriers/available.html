@@ -19,6 +19,14 @@
     </div>
   </div>
 
+  <div class="mb-6">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-base font-bold text-brand-navy">Demand Hotspots</h2>
+      <p class="text-xs text-brand-navySubtext">Areas with frequent pickups</p>
+    </div>
+    <div id="available-map" class="h-64 rounded-2xl border border-brand-grey"></div>
+  </div>
+
   <div id="available-skeleton" class="space-y-4 hidden">
     {% for i in "123" %}
     <div class="bg-white rounded-2xl shadow-sm p-5 space-y-4 animate-pulse">
@@ -96,4 +104,5 @@
 {% block scripts %}
 <script src="{% static 'js/polling.js' %}"></script>
 <script src="{% static 'js/available.js' %}"></script>
+<script src="{% static 'js/hotspots.js' %}"></script>
 {% endblock %}

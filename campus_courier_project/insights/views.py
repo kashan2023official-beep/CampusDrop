@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from accounts.decorators import staff_required
 from orders.models import Order
 from core.models import AuditLog
+from ml_engine.demand_hotspots import compute_hotspots, hotspots_available
 
 
 @login_required
@@ -26,6 +27,8 @@ def insights_dashboard(request):
         'total_users': total_users,
         'recent_orders': recent_orders,
         'recent_audits': recent_audits,
+        'hotspots': compute_hotspots() if hotspots_available() else [],
+        'hotspots_available': hotspots_available(),
     }
     return render(request, 'insights/dashboard.html', context)
 

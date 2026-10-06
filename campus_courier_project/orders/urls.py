@@ -13,4 +13,6 @@ urlpatterns = [
     path('api/landmarks/', views.landmarks_json_view, name='landmarks_json'),
     path('api/estimate-distance/', views.distance_estimate_view, name='distance_estimate'),
     path('api/reverse-geocode/', views.reverse_geocode_view, name='reverse_geocode'),
+    path('api/hotspots/', views.hotspots_view, name='hotspots'),
+    path('api/hotspots/json/', views.hotspots_view, name='hotspots_json'),
 ]

@@ -9,6 +9,13 @@ from core.audit import log
 class Command(BaseCommand):
     help = "Seed demo data: users, courier profile, sample orders across campus, and audit logs."
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--with-history',
+            action='store_true',
+            help='Generate historical orders for DBSCAN clustering demo.',
+        )
+
     def handle(self, *args, **options):
         if User.objects.filter(username='demo_sender').exists():
             self.stdout.write(
@@ -210,3 +217,48 @@ class Command(BaseCommand):
                 f"Seed completed successfully: {users_created} users created, {orders_created} orders created."
             )
         )
+
+        if options.get('with_history'):
+            self.generate_demo_orders(demo_sender, demo_courier)
+
+    def generate_demo_orders(self, demo_sender, demo_courier):
+        import random
+        from django.utils import timezone
+        
+        now = timezone.now()
+        history_orders_created = 0
+
+        clusters = [
+            {'name': 'Main Library', 'lat': 31.5781, 'lon': 74.3550, 'count': 15},
+            {'name': 'CS Dept', 'lat': 31.5790, 'lon': 74.3530, 'count': 10},
+            {'name': 'Sports Cafeteria', 'lat': 31.5806, 'lon': 74.3558, 'count': 8},
+        ]
+
+        for cluster in clusters:
+            for _ in range(cluster['count']):
+                Order.objects.create(
+                    sender=demo_sender, courier=demo_courier,
+                    pickup_lat=cluster['lat'] + random.uniform(-0.0005, 0.0005),
+                    pickup_lon=cluster['lon'] + random.uniform(-0.0005, 0.0005),
+                    pickup_label=cluster['name'],
+                    dropoff_lat=31.58, dropoff_lon=74.356, dropoff_label='Campus Dropoff',
+                    weight_kg=1.0, item_type='DOCUMENT', status='DELIVERED',
+                    distance_km=0.5, predicted_fare=150.0,
+                    accepted_at=now, picked_up_at=now, delivered_at=now,
+                )
+                history_orders_created += 1
+
+        for _ in range(7):
+            Order.objects.create(
+                sender=demo_sender, courier=demo_courier,
+                pickup_lat=random.uniform(31.5757, 31.5838),
+                pickup_lon=random.uniform(74.3507, 74.3592),
+                pickup_label='Random Spot',
+                dropoff_lat=31.58, dropoff_lon=74.356, dropoff_label='Campus Dropoff',
+                weight_kg=1.0, item_type='OTHER', status='DELIVERED',
+                distance_km=0.5, predicted_fare=200.0,
+                accepted_at=now, picked_up_at=now, delivered_at=now,
+            )
+            history_orders_created += 1
+
+        self.stdout.write(self.style.SUCCESS(f"Generated {history_orders_created} historical orders for clustering."))
