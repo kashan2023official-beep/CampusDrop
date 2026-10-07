@@ -1,4 +1,5 @@
 module.exports = {
+  safelist: ['bottom-20'],
   content: [
     './templates/**/*.html',
     './templates/components/*.html',
