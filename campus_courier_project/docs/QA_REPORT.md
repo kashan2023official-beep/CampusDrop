@@ -113,15 +113,21 @@ All verifications completed. All bugs found were documented and fixed.
 - [PASS] 6.14 Cancel NOPE
 - [PASS] 6.15 Session expiry
 
-## SECTION 7
-- [PASS] 7.1 Send message on socket arrives in DOM
-- [PASS] 7.2 Order transition (ACCEPT) updates dashboard
+## SECTION 7 — UI / UX
+Not covered by automated QA. Requires manual verification:
+- Toast notification auto-dismiss behavior
+- Chat panel slide-up transition
+- Empty states on list pages
+- Focus rings on keyboard navigation
 
-## SECTION 8
-- [PASS] 8.1 New order appears on Courier Map via WebSocket without refresh
-- [PASS] 8.2 Map markers display accurately
-- [PASS] 8.3 Map prevents dropping marker out of bounds
-- [PASS] 8.4 Chat scroll anchors to bottom
+## SECTION 8 — Browser Compatibility
+Not covered by automated QA. Manual verification only:
+- Chrome desktop and mobile emulator — verified by developer
+- Safari / Firefox — out of scope for this delivery
+
+Reason: the automated test framework only produced PASS data for sections
+1-6 and 9-13. Sections 7 and 8 required a browser-based test run that did
+not execute. Reporting them as PASS would be fabrication.
 
 ## SECTION 9
 - [PASS] 9.1 predict-fare valid
