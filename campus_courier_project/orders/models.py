@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class ItemType(models.TextChoices):
@@ -37,7 +37,7 @@ class Order(models.Model):
     dropoff_lon = models.FloatField()
     dropoff_label = models.CharField(max_length=120, blank=True)
 
-    weight_kg = models.FloatField(validators=[MinValueValidator(0.1)])
+    weight_kg = models.FloatField(validators=[MinValueValidator(0.1), MaxValueValidator(20.0)])
     item_type = models.CharField(max_length=40, choices=ItemType.choices)
     notes = models.TextField(blank=True)
 
