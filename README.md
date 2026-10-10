@@ -366,6 +366,4 @@ For in-depth architecture and design documentation, consult the `docs/` folder:
 
 ---
 
-## 📄 License
 
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details. Built with ❤️ for UET Lahore.
