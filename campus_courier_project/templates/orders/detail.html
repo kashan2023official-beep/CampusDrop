@@ -287,12 +287,20 @@
         </form>
       {% endif %}
 
-      {% if request.user == order.courier and order.status == 'ACCEPTED' or request.user == order.courier and order.status == 'PICKED_UP' %}
-        {% with lat=order.dropoff_lat|stringformat:"f" lon=order.dropoff_lon|stringformat:"f" %}
-        {% with nav_url="https://www.google.com/maps/dir/?api=1&destination="|add:lat|add:","|add:lon|add:"&travelmode=driving" %}
-          {% include "components/_button.html" with label="Navigate to Dropoff" variant="secondary" icon="navigation" href=nav_url attrs='target="_blank" rel="noopener"' %}
-        {% endwith %}
-        {% endwith %}
+      {% if request.user == order.courier %}
+        {% if order.status == 'ACCEPTED' %}
+          {% with lat=order.pickup_lat|stringformat:"f" lon=order.pickup_lon|stringformat:"f" %}
+          {% with nav_url="https://www.google.com/maps/dir/?api=1&destination="|add:lat|add:","|add:lon|add:"&travelmode=driving" %}
+            {% include "components/_button.html" with label="Navigate to Pickup" variant="secondary" icon="map-pin" href=nav_url attrs='target="_blank" rel="noopener"' %}
+          {% endwith %}
+          {% endwith %}
+        {% elif order.status == 'PICKED_UP' %}
+          {% with lat=order.dropoff_lat|stringformat:"f" lon=order.dropoff_lon|stringformat:"f" %}
+          {% with nav_url="https://www.google.com/maps/dir/?api=1&destination="|add:lat|add:","|add:lon|add:"&travelmode=driving" %}
+            {% include "components/_button.html" with label="Navigate to Dropoff" variant="secondary" icon="flag" href=nav_url attrs='target="_blank" rel="noopener"' %}
+          {% endwith %}
+          {% endwith %}
+        {% endif %}
       {% endif %}
 
       {% if request.user == order.courier and order.status == 'ACCEPTED' %}
