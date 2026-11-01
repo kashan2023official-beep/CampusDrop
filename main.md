@@ -1,7 +1,7 @@
 # CAMPUS COURIER — MASTER BOOTSTRAP FILE
 
 > **⚠️ READ THIS ENTIRE FILE BEFORE DOING ANYTHING.**
-> This is the single source of truth for bootstrapping the Campus Courier project. It contains:
+> This is the single source of truth for bootstrapping the Campus Drop project. It contains:
 > 1. Instructions to you (the AI agent)
 > 2. A complete list of every file you must create
 > 3. The exact content of every file
@@ -14,7 +14,7 @@
 
 ### 0.1 Your Task
 
-You are bootstrapping a Django project called **Campus Courier** for a university semester project. Your job in this session is **ONLY to create the following**:
+You are bootstrapping a Django project called **Campus Drop** for a university semester project. Your job in this session is **ONLY to create the following**:
 
 1. The Django project scaffold (`campus_courier/`)
 2. Empty Django apps: `core`, `accounts`, `orders`, `couriers`, `ml_engine`, `insights`
@@ -107,7 +107,7 @@ When you have created all the files above, respond with a plain list of paths (o
 
 ## PART 1 — PROJECT SUMMARY (context for you, do not write to any file)
 
-**Campus Courier** is a hyperlocal parcel courier dispatch system for University of Engineering and Technology (UET), Lahore (Ghari Shahu campus). Senders create parcel orders. Couriers accept and deliver. Fare is ML-predicted in PKR. Mockup v1 is restricted to campus premises.
+**Campus Drop** is a hyperlocal parcel courier dispatch system for University of Engineering and Technology (UET), Lahore (Ghari Shahu campus). Senders create parcel orders. Couriers accept and deliver. Fare is ML-predicted in PKR. Mockup v1 is restricted to campus premises.
 
 - Backend: Django 5.x
 - DB: SQLite
@@ -137,7 +137,7 @@ Path: `README.md`
 Content:
 
 ```markdown
-# Campus Courier — UET Lahore
+# Campus Drop — UET Lahore
 
 A hyperlocal courier dispatch platform for University of Engineering and Technology, Lahore (Ghari Shahu campus). Senders create parcel orders, couriers accept and deliver them. Fare is predicted using a simple ML model. Currency: PKR.
 
@@ -245,7 +245,7 @@ Content:
 
 ## Overview
 
-Campus Courier is a monolithic Django application. Server-rendered HTML templates with Tailwind CSS, vanilla JavaScript for interactivity, and Leaflet for maps. AJAX polling (5s) provides pseudo-realtime updates. No WebSockets in v1.
+Campus Drop is a monolithic Django application. Server-rendered HTML templates with Tailwind CSS, vanilla JavaScript for interactivity, and Leaflet for maps. AJAX polling (5s) provides pseudo-realtime updates. No WebSockets in v1.
 
 ## High-Level Diagram
 
@@ -694,7 +694,7 @@ Structure:
 <!doctype html>
 <html>
 <head>
-  <title>{% block title %}Campus Courier{% endblock %}</title>
+  <title>{% block title %}Campus Drop{% endblock %}</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

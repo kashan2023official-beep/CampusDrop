@@ -1,4 +1,4 @@
-# 📦 Campus Courier Project — UET Lahore
+# 📦 Campus Drop Project — UET Lahore
 
 A hyperlocal courier dispatch platform for University of Engineering and Technology, Lahore (Ghari Shahu campus). Senders create parcel orders, couriers accept and deliver them, with ML-predicted fares in PKR.
 

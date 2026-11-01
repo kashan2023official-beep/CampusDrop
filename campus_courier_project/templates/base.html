@@ -1,177 +1,307 @@
 {% load static %}
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>{% block title %}Campus Courier{% endblock %}</title>
-  <style>
-    [x-cloak] { display: none !important; }
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateX(20px); }
-      to   { opacity: 1; transform: translateX(0); }
-    }
-    @keyframes slideOut {
-      from { opacity: 1; transform: translateX(0); }
-      to   { opacity: 0; transform: translateX(20px); }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>{% block title %}Campus Drop{% endblock %}</title>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}" />
+    <style>
+      [x-cloak] {
+        display: none !important;
       }
-    }
-  </style>
-  <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
-  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  {% block head %}{% endblock %}
-</head>
-<body class="bg-brand-greySubtle text-brand-navy min-h-screen flex flex-col font-sans">
-  <!-- Mobile Top Bar (< 768px) -->
-  <nav class="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-brand-grey md:hidden">
-    <div class="px-4 h-14 flex items-center justify-between">
-      <!-- Left: Green location pin + 2-line title -->
-      <a href="{% url 'dashboard' %}" class="flex items-center gap-2.5 min-w-0 hover:opacity-90 transition">
-        <div class="w-8 h-8 rounded-full bg-brand-greenTint flex items-center justify-center flex-shrink-0 text-brand-green">
-          <i data-lucide="map-pin" class="w-4 h-4"></i>
-        </div>
-        <div class="min-w-0 leading-tight">
-          <div class="text-[10px] text-brand-navySubtext truncate">
-            {% if current_mode == 'courier' %}Courier Mode{% else %}Your Deliveries{% endif %}
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      @keyframes slideOut {
+        from {
+          opacity: 1;
+          transform: translateX(0);
+        }
+        to {
+          opacity: 0;
+          transform: translateX(20px);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+      #splash-screen {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background-color: #f7f7fc; /* brand-greySubtle */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.6s ease-out;
+      }
+      #splash-screen.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+      #splash-logo {
+        /* Responsive sizing: ~20% of mobile screen, max 10% on desktop */
+        width: 25vw;
+        max-width: 160px;
+        min-width: 100px;
+        height: auto;
+        mix-blend-mode: multiply;
+        animation: logoFadeIn 0.8s ease-out forwards;
+      }
+      @keyframes logoFadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      .splash-spinner {
+        width: 24px;
+        height: 24px;
+        border: 3px solid #dcfce7; /* brand-greenSoft */
+        border-top-color: #22c55e; /* brand-green */
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-top: 24px;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}" />
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    {% block head %}{% endblock %}
+  </head>
+  <body
+    class="bg-brand-greySubtle text-brand-navy min-h-screen flex flex-col font-sans"
+  >
+    <div id="splash-screen">
+      <img
+        src="{% static 'images/logo.png' %}"
+        alt="Campus Drop"
+        id="splash-logo"
+      />
+      <h1
+        class="text-xl md:text-2xl font-bold text-brand-navy mt-4 tracking-wide"
+      >
+        Campus Drop
+      </h1>
+      <div class="splash-spinner"></div>
+    </div>
+    <!-- Mobile Top Bar (< 768px) -->
+    <nav
+      class="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-brand-grey md:hidden"
+    >
+      <div class="px-4 h-14 flex items-center justify-between">
+        <!-- Left: Green location pin + 2-line title -->
+        <a
+          href="{% url 'dashboard' %}"
+          class="flex items-center gap-2.5 min-w-0 hover:opacity-90 transition"
+        >
+          <img
+            src="{% static 'images/logo.png' %}"
+            alt="Campus Drop"
+            class="h-8 w-auto mix-blend-multiply object-contain"
+          />
+          <div class="min-w-0 leading-tight">
+            <div class="text-[10px] text-brand-navySubtext truncate">
+              {% if current_mode == 'courier' %}Courier Mode{% else %}Your
+              Deliveries{% endif %}
+            </div>
+            <div class="text-sm font-bold text-brand-navy truncate">
+              {% block topbar_title %} {% if request.resolver_match.url_name == 'dashboard' %} {% if current_mode == 'courier' %}Available Jobs{% else %}Campus Drop{% endif %} {% elif request.resolver_match.url_name == 'order_list' %} My Orders {% elif request.resolver_match.url_name == 'order_create' %} New
+              Order {% elif request.resolver_match.url_name == 'order_detail' %}
+              Order Details {% elif request.resolver_match.url_name == 'courier_available' %} Available Orders {% elif request.resolver_match.url_name == 'courier_jobs' %} My Jobs {% elif request.resolver_match.url_name == 'profile' %} Profile {% else %} {% if current_mode == 'courier' %}Available Jobs{% else %}Campus Drop{% endif %} {% endif %} {% endblock %}
+            </div>
           </div>
-          <div class="text-sm font-bold text-brand-navy truncate">
-            {% block topbar_title %}
-              {% if request.resolver_match.url_name == 'dashboard' %}
-                {% if current_mode == 'courier' %}Available Jobs{% else %}Campus Courier{% endif %}
-              {% elif request.resolver_match.url_name == 'order_list' %}
-                My Orders
-              {% elif request.resolver_match.url_name == 'order_create' %}
-                New Order
-              {% elif request.resolver_match.url_name == 'order_detail' %}
-                Order Details
-              {% elif request.resolver_match.url_name == 'courier_available' %}
-                Available Orders
-              {% elif request.resolver_match.url_name == 'courier_jobs' %}
-                My Jobs
-              {% elif request.resolver_match.url_name == 'profile' %}
-                Profile
-              {% else %}
-                {% if current_mode == 'courier' %}Available Jobs{% else %}Campus Courier{% endif %}
-              {% endif %}
-            {% endblock %}
-          </div>
-        </div>
-      </a>
+        </a>
 
-      <!-- Right: Role Switch & Avatar -->
-      <div class="flex items-center gap-1.5 flex-shrink-0">
-        {% if user.is_authenticated %}
+        <!-- Right: Role Switch & Avatar -->
+        <div class="flex items-center gap-1.5 flex-shrink-0">
+          {% if user.is_authenticated %}
           <form method="post" action="{% url 'toggle_role' %}" class="inline">
             {% csrf_token %}
-            <input type="hidden" name="next" value="{{ request.path }}">
-            <button type="submit"
-                    class="p-2 rounded-full text-brand-navySubtext hover:bg-brand-greyLight transition min-h-touch min-w-touch inline-flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2"
-                    title="Switch to {% if current_mode == 'courier' %}Sender{% else %}Courier{% endif %}"
-                    aria-label="Switch mode">
+            <input type="hidden" name="next" value="{{ request.path }}" />
+            <button
+              type="submit"
+              class="p-2 rounded-full text-brand-navySubtext hover:bg-brand-greyLight transition min-h-touch min-w-touch inline-flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2"
+              title="Switch to {% if current_mode == 'courier' %}Sender{% else %}Courier{% endif %}"
+              aria-label="Switch mode"
+            >
               <i data-lucide="repeat" class="w-5 h-5"></i>
             </button>
           </form>
 
           {% if user.is_staff %}
-          <a href="{% url 'insights_dashboard' %}"
-             class="p-2 rounded-full text-brand-navySubtext hover:bg-brand-greyLight
-                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark"
-             aria-label="Staff Insights">
+          <a
+            href="{% url 'insights_dashboard' %}"
+            class="p-2 rounded-full text-brand-navySubtext hover:bg-brand-greyLight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark"
+            aria-label="Staff Insights"
+          >
             <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
           </a>
           {% endif %}
 
-          <a href="{% url 'profile' %}" class="min-h-touch min-w-touch inline-flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2" aria-label="Profile">
-            <div class="w-9 h-9 rounded-full bg-brand-greenSoft text-brand-greenDarkText flex items-center justify-center font-semibold text-sm">
+          <a
+            href="{% url 'profile' %}"
+            class="min-h-touch min-w-touch inline-flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2"
+            aria-label="Profile"
+          >
+            <div
+              class="w-9 h-9 rounded-full bg-brand-greenSoft text-brand-greenDarkText flex items-center justify-center font-semibold text-sm"
+            >
               {{ user.username|slice:":1"|upper }}
             </div>
           </a>
-        {% else %}
-          <a href="{% url 'login' %}" class="text-xs font-medium text-brand-navySubtext hover:text-brand-navy px-2 py-1.5">
+          {% else %}
+          <a
+            href="{% url 'login' %}"
+            class="text-xs font-medium text-brand-navySubtext hover:text-brand-navy px-2 py-1.5"
+          >
             Login
           </a>
-          <a href="{% url 'register' %}" class="px-2.5 py-1.5 text-xs font-semibold text-white bg-brand-green rounded-md hover:bg-brand-greenDark">
+          <a
+            href="{% url 'register' %}"
+            class="px-2.5 py-1.5 text-xs font-semibold text-white bg-brand-green rounded-md hover:bg-brand-greenDark"
+          >
             Register
           </a>
-        {% endif %}
-      </div>
-    </div>
-  </nav>
-
-  <!-- Desktop Top Nav (>= 768px) -->
-  <nav class="hidden md:block bg-white border-b border-brand-grey shadow-sm">
-    <div class="max-w-5xl mx-auto px-4">
-      <div class="flex justify-between h-16 items-center">
-        <div class="flex items-center space-x-6">
-          <a href="{% url 'dashboard' %}" class="text-xl font-semibold text-brand-navy hover:text-brand-greenDarkText transition">
-            Campus Courier
-          </a>
-          {% if user.is_authenticated %}
-            <div class="hidden md:flex items-center space-x-6">
-              {% if current_mode == 'sender' %}
-                <a href="{% url 'order_list' %}" class="text-sm font-medium text-brand-navySubtext hover:text-brand-blueDarkText transition">
-                  My Orders
-                </a>
-                <a href="{% url 'order_create' %}" class="text-sm font-medium text-brand-navySubtext hover:text-brand-blueDarkText transition">
-                  New Order
-                </a>
-              {% elif current_mode == 'courier' %}
-                <a href="{% url 'courier_available' %}" class="text-sm font-medium text-brand-navySubtext hover:text-brand-blueDarkText transition">
-                  Available Orders
-                </a>
-                <a href="{% url 'courier_jobs' %}" class="text-sm font-medium text-brand-navySubtext hover:text-brand-blueDarkText transition">
-                  My Jobs
-                </a>
-              {% endif %}
-            </div>
           {% endif %}
         </div>
-        <div class="flex items-center space-x-3">
-          {% if user.is_authenticated %}
+      </div>
+    </nav>
+
+    <!-- Desktop Top Nav (>= 768px) -->
+    <nav class="hidden md:block bg-white border-b border-brand-grey shadow-sm">
+      <div class="max-w-5xl mx-auto px-4">
+        <div class="flex justify-between h-16 items-center">
+          <div class="flex items-center space-x-6">
+            <a
+              href="{% url 'dashboard' %}"
+              class="flex items-center gap-2 hover:opacity-90 transition"
+            >
+              <img
+                src="{% static 'images/logo.png' %}"
+                alt="Logo"
+                class="h-8 w-auto mix-blend-multiply"
+              />
+              <span class="text-xl font-semibold text-brand-navy"
+                >Campus Drop</span
+              >
+            </a>
+            {% if user.is_authenticated %}
+            <div class="hidden md:flex items-center space-x-6">
+              {% if current_mode == 'sender' %}
+              <a
+                href="{% url 'order_list' %}"
+                class="text-sm font-medium text-brand-navySubtext hover:text-brand-blueDarkText transition"
+              >
+                My Orders
+              </a>
+              <a
+                href="{% url 'order_create' %}"
+                class="text-sm font-medium text-brand-navySubtext hover:text-brand-blueDarkText transition"
+              >
+                New Order
+              </a>
+              {% elif current_mode == 'courier' %}
+              <a
+                href="{% url 'courier_available' %}"
+                class="text-sm font-medium text-brand-navySubtext hover:text-brand-blueDarkText transition"
+              >
+                Available Orders
+              </a>
+              <a
+                href="{% url 'courier_jobs' %}"
+                class="text-sm font-medium text-brand-navySubtext hover:text-brand-blueDarkText transition"
+              >
+                My Jobs
+              </a>
+              {% endif %}
+            </div>
+            {% endif %}
+          </div>
+          <div class="flex items-center space-x-3">
+            {% if user.is_authenticated %}
             <div class="hidden md:flex items-center space-x-3">
               {% if current_mode == 'courier' %}
-                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-brand-greenSoft text-brand-navy">
-                  Courier
-                </span>
+              <span
+                class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-brand-greenSoft text-brand-navy"
+              >
+                Courier
+              </span>
               {% else %}
-                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-brand-greyLight text-brand-navy">
-                  Sender
-                </span>
+              <span
+                class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-brand-greyLight text-brand-navy"
+              >
+                Sender
+              </span>
               {% endif %}
             </div>
 
             <form method="post" action="{% url 'toggle_role' %}" class="inline">
               {% csrf_token %}
-              <input type="hidden" name="next" value="{{ request.path }}">
-              <button type="submit" class="js-loading-btn px-3 py-1.5 text-xs font-medium text-brand-navy bg-brand-greyLight border border-brand-grey rounded-md hover:bg-brand-grey transition min-h-touch inline-flex items-center">
+              <input type="hidden" name="next" value="{{ request.path }}" />
+              <button
+                type="submit"
+                class="js-loading-btn px-3 py-1.5 text-xs font-medium text-brand-navy bg-brand-greyLight border border-brand-grey rounded-md hover:bg-brand-grey transition min-h-touch inline-flex items-center"
+              >
                 Switch to {% if current_mode == 'courier' %}Sender{% else %}Courier{% endif %}
               </button>
             </form>
 
             <div class="hidden md:flex items-center space-x-3">
-              <a href="{% url 'profile' %}" class="text-sm font-medium text-brand-navySubtext hover:text-brand-blueDarkText transition">
+              <a
+                href="{% url 'profile' %}"
+                class="text-sm font-medium text-brand-navySubtext hover:text-brand-blueDarkText transition"
+              >
                 Profile
               </a>
 
               {% if user.is_staff %}
-              <a href="{% url 'insights_dashboard' %}"
-                 class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium
-                        text-brand-navySubtext hover:bg-brand-greyLight hover:text-brand-navy
-                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark
-                        focus-visible:ring-offset-2">
+              <a
+                href="{% url 'insights_dashboard' %}"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium text-brand-navySubtext hover:bg-brand-greyLight hover:text-brand-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2"
+              >
                 <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
                 Insights
               </a>
@@ -179,143 +309,186 @@
 
               <form method="post" action="{% url 'logout' %}" class="inline">
                 {% csrf_token %}
-                <button type="submit" class="js-loading-btn text-sm font-medium text-brand-redDarkText hover:text-brand-redDark transition">
+                <button
+                  type="submit"
+                  class="js-loading-btn text-sm font-medium text-brand-redDarkText hover:text-brand-redDark transition"
+                >
                   Logout
                 </button>
               </form>
             </div>
-          {% else %}
+            {% else %}
             <div class="flex items-center space-x-4">
-              <a href="{% url 'login' %}" class="text-sm font-medium text-brand-navySubtext hover:text-brand-blueDarkText transition">
+              <a
+                href="{% url 'login' %}"
+                class="text-sm font-medium text-brand-navySubtext hover:text-brand-blueDarkText transition"
+              >
                 Login
               </a>
-              <a href="{% url 'register' %}" class="px-3 py-1.5 text-sm font-semibold text-white bg-brand-green rounded-md hover:bg-brand-greenDark transition min-h-touch inline-flex items-center">
+              <a
+                href="{% url 'register' %}"
+                class="px-3 py-1.5 text-sm font-semibold text-white bg-brand-green rounded-md hover:bg-brand-greenDark transition min-h-touch inline-flex items-center"
+              >
                 Register
               </a>
             </div>
-          {% endif %}
+            {% endif %}
+          </div>
         </div>
       </div>
-    </div>
-  </nav>
+    </nav>
 
-  <main class="max-w-5xl mx-auto px-4 py-6 pb-28 md:pb-6 flex-1 w-full">
-    <script id="django-messages" type="application/json">
-      [
-        {% if messages %}
-        {% for m in messages %}
-        {"message": "{{ m|escapejs }}", "tags": "{{ m.tags|escapejs }}"}{% if not forloop.last %},{% endif %}
-        {% endfor %}
-        {% endif %}
-      ]
-    </script>
+    <main class="max-w-5xl mx-auto px-4 py-6 pb-28 md:pb-6 flex-1 w-full">
+      <script id="django-messages" type="application/json">
+        [
+          {% if messages %}
+          {% for m in messages %}
+          {"message": "{{ m|escapejs }}", "tags": "{{ m.tags|escapejs }}"}{% if not forloop.last %},{% endif %}
+          {% endfor %}
+          {% endif %}
+        ]
+      </script>
 
-    {% block page_title %}{% endblock %}
-    {% block content %}{% endblock %}
-  </main>
+      {% block page_title %}{% endblock %} {% block content %}{% endblock %}
+    </main>
 
-  <footer class="bg-white border-t border-brand-grey py-4 mt-auto">
-    <div class="max-w-5xl mx-auto px-4 text-center text-xs text-brand-navySubtext">
-      Campus Courier · UET Lahore · PKR
-    </div>
-  </footer>
+    <footer class="bg-white border-t border-brand-grey py-4 mt-auto">
+      <div
+        class="max-w-5xl mx-auto px-4 text-center text-xs text-brand-navySubtext"
+      >
+        Campus Drop · UET Lahore · PKR
+      </div>
+    </footer>
 
-  {% if user.is_authenticated %}
-  <nav class="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-white border-t border-brand-grey pb-[env(safe-area-inset-bottom)]">
-    <div class="grid grid-cols-5 h-16 relative">
+    {% if user.is_authenticated %}
+    <nav
+      class="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-white border-t border-brand-grey pb-[env(safe-area-inset-bottom)]"
+    >
+      <div class="grid grid-cols-5 h-16 relative">
+        {# 1. Home #}
+        <a
+          href="{% url 'dashboard' %}"
+          class="flex flex-col items-center justify-center gap-1 text-[11px] font-medium rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2 {% if request.resolver_match.url_name == 'dashboard' %}text-brand-greenDarkText{% else %}text-brand-navySubtext{% endif %}"
+        >
+          <i data-lucide="home" class="w-5 h-5"></i>
+          <span>Home</span>
+        </a>
 
-      {# 1. Home #}
-      <a href="{% url 'dashboard' %}"
-         class="flex flex-col items-center justify-center gap-1 text-[11px] font-medium rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2 {% if request.resolver_match.url_name == 'dashboard' %}text-brand-greenDarkText{% else %}text-brand-navySubtext{% endif %}">
-        <i data-lucide="home" class="w-5 h-5"></i>
-        <span>Home</span>
-      </a>
-
-      {# 2. Orders (sender) OR Available (courier) #}
-      {% if current_mode == 'courier' %}
-        <a href="{% url 'courier_available' %}"
-           class="flex flex-col items-center justify-center gap-1 text-[11px] font-medium rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2 {% if request.resolver_match.url_name == 'courier_available' %}text-brand-greenDarkText{% else %}text-brand-navySubtext{% endif %}">
+        {# 2. Orders (sender) OR Available (courier) #} {% if current_mode == 'courier' %}
+        <a
+          href="{% url 'courier_available' %}"
+          class="flex flex-col items-center justify-center gap-1 text-[11px] font-medium rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2 {% if request.resolver_match.url_name == 'courier_available' %}text-brand-greenDarkText{% else %}text-brand-navySubtext{% endif %}"
+        >
           <i data-lucide="package-search" class="w-5 h-5"></i>
           <span>Available</span>
         </a>
-      {% else %}
-        <a href="{% url 'order_list' %}"
-           class="flex flex-col items-center justify-center gap-1 text-[11px] font-medium rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2 {% if request.resolver_match.url_name == 'order_list' %}text-brand-greenDarkText{% else %}text-brand-navySubtext{% endif %}">
+        {% else %}
+        <a
+          href="{% url 'order_list' %}"
+          class="flex flex-col items-center justify-center gap-1 text-[11px] font-medium rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2 {% if request.resolver_match.url_name == 'order_list' %}text-brand-greenDarkText{% else %}text-brand-navySubtext{% endif %}"
+        >
           <i data-lucide="package" class="w-5 h-5"></i>
           <span>Orders</span>
         </a>
-      {% endif %}
+        {% endif %} {# 3. CENTER FAB — sits above the bar #}
+        <div class="relative flex items-end justify-center">
+          <a
+            href="{% if current_mode == 'courier' %}{% url 'courier_jobs' %}{% else %}{% url 'order_create' %}{% endif %}"
+            class="absolute -top-6 w-14 h-14 rounded-full bg-brand-green text-white flex items-center justify-center shadow-lg active:scale-95 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2"
+            aria-label="{% if current_mode == 'courier' %}Jobs{% else %}New Order{% endif %}"
+          >
+            <i
+              data-lucide="{% if current_mode == 'courier' %}truck{% else %}plus{% endif %}"
+              class="w-6 h-6"
+            ></i>
+          </a>
+          <span
+            class="absolute bottom-2 text-[11px] font-medium text-brand-navySubtext"
+          >
+            {% if current_mode == 'courier' %}Jobs{% else %}New{% endif %}
+          </span>
+        </div>
 
-      {# 3. CENTER FAB — sits above the bar #}
-      <div class="relative flex items-end justify-center">
-        <a href="{% if current_mode == 'courier' %}{% url 'courier_jobs' %}{% else %}{% url 'order_create' %}{% endif %}"
-           class="absolute -top-6 w-14 h-14 rounded-full bg-brand-green text-white flex items-center justify-center shadow-lg active:scale-95 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2"
-           aria-label="{% if current_mode == 'courier' %}Jobs{% else %}New Order{% endif %}">
-          <i data-lucide="{% if current_mode == 'courier' %}truck{% else %}plus{% endif %}"
-             class="w-6 h-6"></i>
-        </a>
-        <span class="absolute bottom-2 text-[11px] font-medium text-brand-navySubtext">
-          {% if current_mode == 'courier' %}Jobs{% else %}New{% endif %}
-        </span>
-      </div>
-
-      {# 4. Jobs (courier) OR Send (sender) #}
-      {% if current_mode == 'courier' %}
-        <a href="{% url 'courier_jobs' %}"
-           class="flex flex-col items-center justify-center gap-1 text-[11px] font-medium rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2 {% if request.resolver_match.url_name == 'courier_jobs' %}text-brand-greenDarkText{% else %}text-brand-navySubtext{% endif %}">
+        {# 4. Jobs (courier) OR Send (sender) #} {% if current_mode == 'courier' %}
+        <a
+          href="{% url 'courier_jobs' %}"
+          class="flex flex-col items-center justify-center gap-1 text-[11px] font-medium rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2 {% if request.resolver_match.url_name == 'courier_jobs' %}text-brand-greenDarkText{% else %}text-brand-navySubtext{% endif %}"
+        >
           <i data-lucide="clipboard-list" class="w-5 h-5"></i>
           <span>My Jobs</span>
         </a>
-      {% else %}
-        <a href="{% url 'order_create' %}"
-           class="flex flex-col items-center justify-center gap-1 text-[11px] font-medium rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2 {% if request.resolver_match.url_name == 'order_create' %}text-brand-greenDarkText{% else %}text-brand-navySubtext{% endif %}">
+        {% else %}
+        <a
+          href="{% url 'order_create' %}"
+          class="flex flex-col items-center justify-center gap-1 text-[11px] font-medium rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2 {% if request.resolver_match.url_name == 'order_create' %}text-brand-greenDarkText{% else %}text-brand-navySubtext{% endif %}"
+        >
           <i data-lucide="plus-circle" class="w-5 h-5"></i>
           <span>Send</span>
         </a>
-      {% endif %}
+        {% endif %} {# 5. Profile #}
+        <a
+          href="{% url 'profile' %}"
+          class="flex flex-col items-center justify-center gap-1 text-[11px] font-medium rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2 {% if request.resolver_match.url_name == 'profile' %}text-brand-greenDarkText{% else %}text-brand-navySubtext{% endif %}"
+        >
+          <i data-lucide="user" class="w-5 h-5"></i>
+          <span>Profile</span>
+        </a>
+      </div>
+    </nav>
+    {% endif %}
 
-      {# 5. Profile #}
-      <a href="{% url 'profile' %}"
-         class="flex flex-col items-center justify-center gap-1 text-[11px] font-medium rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2 {% if request.resolver_match.url_name == 'profile' %}text-brand-greenDarkText{% else %}text-brand-navySubtext{% endif %}">
-        <i data-lucide="user" class="w-5 h-5"></i>
-        <span>Profile</span>
-      </a>
+    <!-- Toast host element -->
+    <div
+      id="toast-host"
+      class="fixed top-20 right-4 left-4 md:left-auto md:right-6 md:top-24 z-50 flex flex-col gap-2 pointer-events-none md:w-96"
+      aria-live="polite"
+    ></div>
 
-    </div>
-  </nav>
-  {% endif %}
-
-  <!-- Toast host element -->
-  <div id="toast-host"
-       class="fixed top-20 right-4 left-4 md:left-auto md:right-6 md:top-24 z-50
-              flex flex-col gap-2 pointer-events-none md:w-96"
-       aria-live="polite">
-  </div>
-
-  <script src="{% static 'js/ws.js' %}"></script>
-  {% block scripts %}
-  {# Page scripts (order_status.js, available.js) load here #}
-  {% endblock %}
-  <script src="{% static 'js/spinner.js' %}"></script>
-  <script src="{% static 'js/toasts.js' %}"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      if (window.lucide) lucide.createIcons();
-      const observer = new MutationObserver((mutations) => {
-        let needsUpdate = false;
-        for (const m of mutations) {
-          for (const n of m.addedNodes) {
-            if (n.nodeType === 1 && (n.matches?.('i[data-lucide]') || n.querySelector?.('i[data-lucide]'))) {
-              needsUpdate = true;
-              break;
+    <script src="{% static 'js/ws.js' %}"></script>
+    {% block scripts %} {# Page scripts (order_status.js, available.js) load
+    here #} {% endblock %}
+    <script src="{% static 'js/spinner.js' %}"></script>
+    <script src="{% static 'js/toasts.js' %}"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        if (window.lucide) lucide.createIcons();
+        const observer = new MutationObserver((mutations) => {
+          let needsUpdate = false;
+          for (const m of mutations) {
+            for (const n of m.addedNodes) {
+              if (
+                n.nodeType === 1 &&
+                (n.matches?.("i[data-lucide]") ||
+                  n.querySelector?.("i[data-lucide]"))
+              ) {
+                needsUpdate = true;
+                break;
+              }
             }
+            if (needsUpdate) break;
           }
-          if (needsUpdate) break;
-        }
-        if (needsUpdate && window.lucide) lucide.createIcons();
+          if (needsUpdate && window.lucide) lucide.createIcons();
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
       });
-      observer.observe(document.body, { childList: true, subtree: true });
-    });
-  </script>
-</body>
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const splash = document.getElementById("splash-screen");
+        if (!splash) return;
+
+        // Check if splash has been shown this session
+        if (sessionStorage.getItem("splashShown")) {
+          splash.remove();
+        } else {
+          // Show for 5 seconds, then fade out and remove
+          setTimeout(() => {
+            splash.classList.add("hidden");
+            sessionStorage.setItem("splashShown", "true");
+            setTimeout(() => splash.remove(), 600); // Wait for fade out
+          }, 2000); // 2000ms = 2 seconds
+        }
+      });
+    </script>
+  </body>
 </html>

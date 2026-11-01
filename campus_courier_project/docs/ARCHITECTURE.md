@@ -2,7 +2,7 @@
 
 ## Overview
 
-Campus Courier is a monolithic Django application. Server-rendered HTML templates with Tailwind CSS, vanilla JavaScript for interactivity, and Leaflet for maps. AJAX polling (5s) provides pseudo-realtime updates. No WebSockets in v1.
+Campus Drop is a monolithic Django application. Server-rendered HTML templates with Tailwind CSS, vanilla JavaScript for interactivity, and Leaflet for maps. AJAX polling (5s) provides pseudo-realtime updates. No WebSockets in v1.
 
 ## High-Level Diagram
 

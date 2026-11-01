@@ -1,6 +1,6 @@
-# Campus Courier — Evaluation & Demonstration Guide
+# Campus Drop — Evaluation & Demonstration Guide
 
-This step-by-step walkthrough provides a complete, 10–15 step script to demonstrate the full lifecycle of the Campus Courier system to project evaluators and graders.
+This step-by-step walkthrough provides a complete, 10–15 step script to demonstrate the full lifecycle of the Campus Drop system to project evaluators and graders.
 
 ---
 

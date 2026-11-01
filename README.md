@@ -1,4 +1,4 @@
-# 📦 Campus Courier (CampusDrop) — UET Lahore
+# 📦 Campus Drop (CampusDrop) — UET Lahore
 
 [![Python Version](https://img.shields.io/badge/Python-3.11%2B-blue.svg?logo=python&logoColor=white)](https://www.python.org/)
 [![Django](https://img.shields.io/badge/Django-5.0.6-092E20.svg?logo=django&logoColor=white)](https://www.djangoproject.com/)
@@ -10,7 +10,7 @@
 
 A modern, hyperlocal peer-to-peer parcel dispatch and courier platform engineered specifically for university campuses. Designed and calibrated for the **University of Engineering and Technology (UET), Lahore Main Campus**.
 
-Campus Courier empowers students and faculty to seamlessly dispatch documents, food, books, electronics, and supplies across campus buildings, fulfilled by verified student couriers with machine-learning-driven dynamic fare estimation in Pakistani Rupees (PKR).
+Campus Drop empowers students and faculty to seamlessly dispatch documents, food, books, electronics, and supplies across campus buildings, fulfilled by verified student couriers with machine-learning-driven dynamic fare estimation in Pakistani Rupees (PKR).
 
 ---
 

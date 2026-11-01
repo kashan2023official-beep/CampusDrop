@@ -9,7 +9,7 @@ Structure:
 <!doctype html>
 <html>
 <head>
-  <title>{% block title %}Campus Courier{% endblock %}</title>
+  <title>{% block title %}Campus Drop{% endblock %}</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

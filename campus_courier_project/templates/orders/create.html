@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Create Order — Campus Courier{% endblock %}
+{% block title %}Create Order — Campus Drop{% endblock %}
 
 {% block head %}
 <style>
@@ -61,7 +61,11 @@
       </div>
     </div>
 
-    <div class="space-y-4 pt-2">
+        <p id="map-instruction" class="text-sm font-medium text-brand-blueDarkText bg-brand-blue/10 p-3 rounded-lg mb-4">
+      👆 Select a Pickup and Dropoff location on the map to continue.
+    </p>
+
+    <div id="parcel-details-container" class="space-y-4 pt-2 opacity-50 pointer-events-none transition-opacity duration-200">
       <h2 class="text-base font-semibold text-brand-navy border-b border-brand-greyLight pb-2">Parcel Information</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
@@ -115,6 +119,47 @@
     }
   });
 </script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const detailsContainer = document.getElementById('parcel-details-container');
+    const instructionText = document.getElementById('map-instruction');
+    
+    const pickupInput = document.getElementById('id_pickup_lat') || document.querySelector('input[name="pickup_lat"]');
+    const dropoffInput = document.getElementById('id_dropoff_lat') || document.querySelector('input[name="dropoff_lat"]');
+    
+    function checkMapStatus() {
+      if (!pickupInput || !dropoffInput || !detailsContainer) return;
+      
+      const hasPickup = pickupInput.value.trim() !== '';
+      const hasDropoff = dropoffInput.value.trim() !== '';
+      
+      if (hasPickup && hasDropoff) {
+        // Unlock form
+        detailsContainer.classList.remove('opacity-50', 'pointer-events-none');
+        if (instructionText) instructionText.style.display = 'none';
+      } else {
+        // Lock form
+        detailsContainer.classList.add('opacity-50', 'pointer-events-none');
+        if (instructionText) instructionText.style.display = 'block';
+      }
+    }
+    
+    // Check immediately on load
+    checkMapStatus();
+    
+    // Periodically poll and listen to events
+    setInterval(checkMapStatus, 500);
+    if (pickupInput) {
+      pickupInput.addEventListener('input', checkMapStatus);
+      pickupInput.addEventListener('change', checkMapStatus);
+    }
+    if (dropoffInput) {
+      dropoffInput.addEventListener('input', checkMapStatus);
+      dropoffInput.addEventListener('change', checkMapStatus);
+    }
+  });
+</script>
+
 {% endblock %}
 
 {% block scripts %}

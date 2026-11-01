@@ -23,7 +23,7 @@ class RegisterView(FormView):
     def form_valid(self, form):
         user = form.save()
         login(self.request, user)
-        messages.success(self.request, "Account created successfully! Welcome to Campus Courier.")
+        messages.success(self.request, "Account created successfully! Welcome to Campus Drop.")
         return redirect('dashboard')
 
 

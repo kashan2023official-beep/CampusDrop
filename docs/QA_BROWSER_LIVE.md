@@ -1,4 +1,4 @@
-# Campus Courier — Live Browser QA Report
+# Campus Drop — Live Browser QA Report
 
 **Run at:** 2026-10-07T19:24:56+05:00
 **Viewports tested:** 1440×900 desktop, 390×844 mobile

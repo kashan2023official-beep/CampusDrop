@@ -150,7 +150,8 @@ export function initOrderMap(opts) {
       };
 
       buttons.forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
           currentMode = btn.dataset.mode;
           updateButtonStates();
         });
@@ -282,16 +283,18 @@ export function initOrderMap(opts) {
                 popupContent.className = 'p-1';
                 popupContent.innerHTML = `<p class="font-bold text-sm text-brand-navy mb-2">${lm.name}</p>
                   <div class="flex space-x-2">
-                    <button class="set-pickup-btn px-2.5 py-1 bg-brand-green text-brand-navy font-semibold rounded text-xs shadow-sm hover:bg-brand-greenDark">Set as Pickup</button>
-                    <button class="set-dropoff-btn px-2.5 py-1 bg-brand-red text-white font-semibold rounded text-xs shadow-sm hover:bg-brand-redDark">Set as Dropoff</button>
+                    <button type="button" class="set-pickup-btn px-2.5 py-1 bg-brand-green text-brand-navy font-semibold rounded text-xs shadow-sm hover:bg-brand-greenDark">Set as Pickup</button>
+                    <button type="button" class="set-dropoff-btn px-2.5 py-1 bg-brand-red text-white font-semibold rounded text-xs shadow-sm hover:bg-brand-redDark">Set as Dropoff</button>
                   </div>`;
                 
-                popupContent.querySelector('.set-pickup-btn').addEventListener('click', () => {
+                popupContent.querySelector('.set-pickup-btn').addEventListener('click', (e) => {
+                    e.preventDefault();
                     updatePickup(lm.lat, lm.lon);
                     map.closePopup();
                     if (window.DEBUG_MAP) console.log('Landmark set as pickup:', lm.name);
                 });
-                popupContent.querySelector('.set-dropoff-btn').addEventListener('click', () => {
+                popupContent.querySelector('.set-dropoff-btn').addEventListener('click', (e) => {
+                    e.preventDefault();
                     updateDropoff(lm.lat, lm.lon);
                     map.closePopup();
                     if (window.DEBUG_MAP) console.log('Landmark set as dropoff:', lm.name);
