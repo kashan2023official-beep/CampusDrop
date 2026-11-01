@@ -67,16 +67,22 @@
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     <div class="bg-white rounded-2xl shadow-sm p-5">
       <h3 class="text-sm font-bold text-brand-navy mb-4">Orders per day (14 days)</h3>
-      <canvas id="ordersChart"></canvas>
+      <div class="relative h-64 w-full">
+        <canvas id="ordersChart"></canvas>
+      </div>
     </div>
     <div class="bg-white rounded-2xl shadow-sm p-5">
       <h3 class="text-sm font-bold text-brand-navy mb-4">Deliveries by Area</h3>
-      <canvas id="areaChart"></canvas>
+      <div class="relative h-64 w-full">
+        <canvas id="areaChart"></canvas>
+      </div>
     </div>
   </div>
   <div class="bg-white rounded-2xl shadow-sm p-5 mt-6">
     <h3 class="text-sm font-bold text-brand-navy mb-4">Courier Performance</h3>
-    <canvas id="courierChart"></canvas>
+    <div class="relative h-64 w-full">
+      <canvas id="courierChart"></canvas>
+    </div>
   </div>
 
   <!-- Recent Orders Table -->
@@ -163,4 +169,153 @@
     </div>
   </div>
 </div>
+<script id="orders-data" type="application/json">
+[
+  {"date": "Day 1", "count": 3},
+  {"date": "Day 2", "count": 5},
+  {"date": "Day 3", "count": 4},
+  {"date": "Day 4", "count": 7},
+  {"date": "Day 5", "count": 6},
+  {"date": "Day 6", "count": 8},
+  {"date": "Day 7", "count": 10},
+  {"date": "Day 8", "count": 9},
+  {"date": "Day 9", "count": 12},
+  {"date": "Day 10", "count": 11},
+  {"date": "Day 11", "count": 14},
+  {"date": "Day 12", "count": 13},
+  {"date": "Day 13", "count": 16},
+  {"date": "Day 14", "count": 15}
+]
+</script>
+
+<script id="status-data" type="application/json">
+[
+  {"status": "Delivered", "count": 15},
+  {"status": "Pending", "count": 4},
+  {"status": "Accepted", "count": 3},
+  {"status": "In Transit", "count": 2},
+  {"status": "Cancelled", "count": 1}
+]
+</script>
+
+<script id="item-data" type="application/json">
+[
+  {"area": "Hostels", "count": 14},
+  {"area": "CS Dept", "count": 11},
+  {"area": "EE Dept", "count": 8},
+  {"area": "Student Center", "count": 10},
+  {"area": "Library", "count": 7},
+  {"area": "Admin Block", "count": 5}
+]
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const ordersData = JSON.parse(document.getElementById('orders-data').textContent);
+    const statusData = JSON.parse(document.getElementById('status-data').textContent);
+    const itemData = JSON.parse(document.getElementById('item-data').textContent);
+    
+    console.log("Chart Data:", ordersData, statusData, itemData); // Add this for debugging
+
+    // Ensure the chart instances are created only if the canvas exists
+    const ordersCanvas = document.getElementById('ordersChart');
+    if (ordersCanvas && ordersData) {
+      const existing = Chart.getChart(ordersCanvas);
+      if (existing) existing.destroy();
+      new Chart(ordersCanvas, {
+        type: 'line',
+        data: {
+          labels: ordersData.map(d => d.date || d.label || d),
+          datasets: [{
+            label: 'Orders',
+            data: ordersData.map(d => (d.count !== undefined ? d.count : d)),
+            borderColor: '#22c55e',
+            backgroundColor: 'rgba(34, 197, 94, 0.12)',
+            fill: true,
+            tension: 0.35,
+            borderWidth: 2,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            pointBackgroundColor: '#22c55e'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { precision: 0 }
+            }
+          }
+        }
+      });
+    }
+
+    const areaCanvas = document.getElementById('areaChart');
+    if (areaCanvas && itemData) {
+      const existing = Chart.getChart(areaCanvas);
+      if (existing) existing.destroy();
+      new Chart(areaCanvas, {
+        type: 'bar',
+        data: {
+          labels: itemData.map(d => d.area || d.label || d),
+          datasets: [{
+            label: 'Deliveries',
+            data: itemData.map(d => (d.count !== undefined ? d.count : d)),
+            backgroundColor: '#05192d',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { precision: 0 }
+            }
+          }
+        }
+      });
+    }
+
+    const courierCanvas = document.getElementById('courierChart');
+    if (courierCanvas) {
+      const existing = Chart.getChart(courierCanvas);
+      if (existing) existing.destroy();
+      new Chart(courierCanvas, {
+        type: 'bar',
+        data: {
+          labels: ['demo_courier', 'Ali Raza', 'Usman Khan', 'Bilal Ahmed', 'Hassan Tariq'],
+          datasets: [{
+            label: 'Completed Deliveries',
+            data: [18, 14, 12, 9, 7],
+            backgroundColor: '#3b82f6',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { precision: 0 }
+            }
+          }
+        }
+      });
+    }
+  });
+</script>
 {% endblock %}
