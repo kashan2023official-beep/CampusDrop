@@ -8,6 +8,13 @@ function chatPanel(orderId) {
     reconnectTimer: null,
     currentUserId: window.CURRENT_USER_ID || 0,
 
+    init() {
+      if (!this.ws) {
+        this.connect();
+      }
+    },
+
+
     openChat() {
       this.open = true;
       this.$nextTick(() => {
@@ -66,6 +73,9 @@ function chatPanel(orderId) {
     receiveMessage(m) {
       if (this.messages.some(x => x.id === m.id)) return;
       this.messages.push(m);
+      if (!this.open && window.showToast) {
+        window.showToast(`New message from ${m.sender_username}`, 'info');
+      }
       this.$nextTick(() => {
         this.scrollBottom();
         if (window.lucide) window.lucide.createIcons();

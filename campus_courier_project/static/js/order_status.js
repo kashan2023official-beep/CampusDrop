@@ -57,6 +57,12 @@ function updateOrderStatus(data) {
     if (line3) line3.className = `flex-1 h-1 mx-2 ${currentIdx >= 3 ? 'bg-brand-green' : 'bg-brand-grey'}`;
     if (step4) step4.className = `w-8 h-8 rounded-full flex items-center justify-center font-semibold text-xs ${currentIdx >= 3 ? 'bg-brand-green text-brand-navy' : 'bg-brand-grey text-brand-navySubtext'}`;
   }
+
+  if (data && data.status !== window.INITIAL_ORDER_STATUS) {
+    // Major state change (e.g., PENDING -> ACCEPTED or ACCEPTED -> PICKED_UP)
+    // Reload to let Django re-render the conditional UI (contact info, chat button, etc.)
+    window.location.reload();
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {

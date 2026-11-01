@@ -12,6 +12,7 @@
 {% endblock %}
 
 {% block content %}
+<script>window.INITIAL_ORDER_STATUS = "{{ order.status }}";</script>
 <script>window.CURRENT_USER_ID = {{ request.user.id }};</script>
 <div id="order-status-root" data-order-id="{{ order.id }}" class="max-w-3xl mx-auto space-y-6">
   <div class="flex items-center justify-between pb-2">

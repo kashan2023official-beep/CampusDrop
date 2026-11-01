@@ -1,5 +1,7 @@
 <div x-data="chatPanel({{ order.id }})"
+     @open-chat-{{ order.id }}.window="openChat()"
      @open-chat.window="openChat()"
+     @close-chat-{{ order.id }}.window="closeChat()"
      @close-chat.window="closeChat()">
 
   <!-- Backdrop (mobile only) -->

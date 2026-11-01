@@ -105,3 +105,38 @@ document.addEventListener('DOMContentLoaded', () => {
     window.lucide.createIcons();
   }
 });
+
+window.showToast = function(message, type = 'info') {
+  const host = document.getElementById('toast-host');
+  if (!host) return;
+  
+  // Create toast element
+  const toast = document.createElement('div');
+  toast.className = `toast pointer-events-auto bg-white rounded-2xl shadow-lg p-4 flex items-start gap-3 animate-[slideIn_0.3s_ease-out]`;
+  
+  // Map type to icon (reuse the same logic from the existing script)
+  let icon = 'info', bg = 'bg-brand-blue/15', color = 'text-brand-blueDarkText';
+  if (type === 'success') { icon = 'check-circle-2'; bg = 'bg-brand-greenTint'; color = 'text-brand-greenDarkText'; }
+  else if (type === 'warning') { icon = 'alert-triangle'; bg = 'bg-brand-yellow/20'; color = 'text-brand-yellowDark'; }
+  
+  toast.innerHTML = `
+    <div class="w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${bg}">
+      <i data-lucide="${icon}" class="w-5 h-5 ${color}"></i>
+    </div>
+    <div class="flex-1 min-w-0">
+      <p class="text-sm font-medium text-brand-navy">${message}</p>
+    </div>
+    <button class="text-brand-navySubtext hover:text-brand-navy p-1" onclick="this.parentElement.remove()">
+      <i data-lucide="x" class="w-4 h-4"></i>
+    </button>
+  `;
+  
+  host.appendChild(toast);
+  if (window.lucide) window.lucide.createIcons();
+  
+  // Auto dismiss after 4s
+  setTimeout(() => {
+    toast.style.animation = 'slideOut 0.3s ease-in forwards';
+    setTimeout(() => toast.remove(), 300);
+  }, 4000);
+};

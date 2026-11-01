@@ -4,6 +4,7 @@
 {% block title %}My Jobs — Campus Drop{% endblock %}
 
 {% block content %}
+<script>window.CURRENT_USER_ID = {{ request.user.id }};</script>
 <div class="space-y-6">
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
     <div>
@@ -97,6 +98,13 @@
                   </form>
                 {% endif %}
 
+                <button type="button"
+                        onclick="window.dispatchEvent(new CustomEvent('open-chat-{{ job.id }}'))"
+                        class="w-11 h-11 rounded-full bg-brand-greenSoft text-brand-greenDarkText flex items-center justify-center shrink-0 active:scale-95 transition-transform"
+                        title="Chat with Sender">
+                  <i data-lucide="message-circle" class="w-5 h-5"></i>
+                </button>
+
                 <a href="https://www.google.com/maps/dir/?api=1&destination={{ job.pickup_lat }},{{ job.pickup_lon }}&travelmode=driving"
                    target="_blank" rel="noopener" title="Navigate to Pickup"
                    class="w-11 h-11 rounded-full bg-brand-greyLight text-brand-navy hover:bg-brand-grey transition flex items-center justify-center shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-greenDark focus-visible:ring-offset-2">
@@ -171,9 +179,14 @@
     </section>
   {% endif %}
 </div>
+
+  {% for order in active_jobs %}
+    {% include "components/_chat_panel.html" with order=order other_party=order.sender %}
+  {% endfor %}
 {% endblock %}
 
 {% block scripts %}
+<script src="{% static 'js/chat.js' %}"></script>
 <script type="module">
   import { initStaticMaps } from "{% static 'js/static_map.js' %}";
   document.addEventListener('DOMContentLoaded', () => {
