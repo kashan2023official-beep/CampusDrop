@@ -142,9 +142,9 @@ export function initOrderMap(opts) {
       const updateButtonStates = () => {
         buttons.forEach(btn => {
           if (btn.dataset.mode === currentMode) {
-            btn.className = 'px-3 py-1.5 text-sm font-semibold rounded-md bg-brand-green text-brand-navy shadow-sm hover:bg-brand-greenDark';
+            btn.className = 'flex-1 md:flex-none px-4 py-2.5 rounded-full bg-brand-green text-white font-medium text-sm transition-colors shadow-sm';
           } else {
-            btn.className = 'px-3 py-1.5 text-sm font-medium rounded-md bg-white border border-brand-grey text-brand-navySubtext shadow-sm hover:bg-brand-greySubtle';
+            btn.className = 'flex-1 md:flex-none px-4 py-2.5 rounded-full bg-white border border-brand-grey text-brand-navy font-medium text-sm hover:bg-brand-greyLight transition-colors shadow-sm';
           }
         });
       };

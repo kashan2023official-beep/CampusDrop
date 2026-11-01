@@ -33,11 +33,18 @@
     {{ form.dropoff_lon }}
 
     <div class="space-y-4">
-      <div class="flex items-center justify-between border-b border-brand-greyLight pb-2">
-        <h2 class="text-base font-semibold text-brand-navy">Select Locations on Map</h2>
-        <div class="space-x-2" id="mode-buttons">
-          <button type="button" data-mode="pickup" class="px-3 py-1.5 text-sm font-medium rounded-md bg-brand-green text-white shadow-sm hover:bg-brand-greenDark">Set Pickup</button>
-          <button type="button" data-mode="dropoff" class="px-3 py-1.5 text-sm font-medium rounded-md bg-white border border-brand-grey text-brand-navy shadow-sm hover:bg-brand-greySubtle">Set Dropoff</button>
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+        <!-- Heading -->
+        <h2 class="text-base font-bold text-brand-navy">Select Locations on Map</h2>
+        
+        <!-- Buttons Container (Side-by-side on mobile and desktop) -->
+        <div class="flex gap-2 w-full md:w-auto" id="mode-buttons">
+          <button type="button" id="btn-pickup" data-mode="pickup" class="flex-1 md:flex-none px-4 py-2.5 rounded-full bg-brand-green text-white font-medium text-sm transition-colors shadow-sm">
+            Set Pickup
+          </button>
+          <button type="button" id="btn-dropoff" data-mode="dropoff" class="flex-1 md:flex-none px-4 py-2.5 rounded-full bg-white border border-brand-grey text-brand-navy font-medium text-sm hover:bg-brand-greyLight transition-colors shadow-sm">
+            Set Dropoff
+          </button>
         </div>
       </div>
       
