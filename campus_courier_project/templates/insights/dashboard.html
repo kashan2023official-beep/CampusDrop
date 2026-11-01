@@ -72,14 +72,14 @@
       </div>
     </div>
     <div class="bg-white rounded-2xl shadow-sm p-5">
-      <h3 class="text-sm font-bold text-brand-navy mb-4">Deliveries by Area</h3>
+      <h3 class="text-sm font-bold text-brand-navy mb-4">Deliveries by Item Type</h3>
       <div class="relative h-64 w-full">
-        <canvas id="areaChart"></canvas>
+        <canvas id="itemChart"></canvas>
       </div>
     </div>
   </div>
   <div class="bg-white rounded-2xl shadow-sm p-5 mt-6">
-    <h3 class="text-sm font-bold text-brand-navy mb-4">Courier Performance</h3>
+    <h3 class="text-sm font-bold text-brand-navy mb-4">Top Couriers Performance</h3>
     <div class="relative h-64 w-full">
       <canvas id="courierChart"></canvas>
     </div>
@@ -169,66 +169,45 @@
     </div>
   </div>
 </div>
-<script id="orders-data" type="application/json">
-[
-  {"date": "Day 1", "count": 3},
-  {"date": "Day 2", "count": 5},
-  {"date": "Day 3", "count": 4},
-  {"date": "Day 4", "count": 7},
-  {"date": "Day 5", "count": 6},
-  {"date": "Day 6", "count": 8},
-  {"date": "Day 7", "count": 10},
-  {"date": "Day 8", "count": 9},
-  {"date": "Day 9", "count": 12},
-  {"date": "Day 10", "count": 11},
-  {"date": "Day 11", "count": 14},
-  {"date": "Day 12", "count": 13},
-  {"date": "Day 13", "count": 16},
-  {"date": "Day 14", "count": 15}
-]
-</script>
-
-<script id="status-data" type="application/json">
-[
-  {"status": "Delivered", "count": 15},
-  {"status": "Pending", "count": 4},
-  {"status": "Accepted", "count": 3},
-  {"status": "In Transit", "count": 2},
-  {"status": "Cancelled", "count": 1}
-]
-</script>
-
-<script id="item-data" type="application/json">
-[
-  {"area": "Hostels", "count": 14},
-  {"area": "CS Dept", "count": 11},
-  {"area": "EE Dept", "count": 8},
-  {"area": "Student Center", "count": 10},
-  {"area": "Library", "count": 7},
-  {"area": "Admin Block", "count": 5}
-]
-</script>
+{{ chart_orders_json|json_script:"orders-data" }}
+{{ chart_item_json|json_script:"item-data" }}
+{{ chart_courier_json|json_script:"courier-data" }}
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const ordersData = JSON.parse(document.getElementById('orders-data').textContent);
-    const statusData = JSON.parse(document.getElementById('status-data').textContent);
-    const itemData = JSON.parse(document.getElementById('item-data').textContent);
-    
-    console.log("Chart Data:", ordersData, statusData, itemData); // Add this for debugging
+    const parseJson = (id) => {
+      const el = document.getElementById(id);
+      if (!el) return [];
+      try {
+        let val = JSON.parse(el.textContent);
+        if (typeof val === 'string') {
+          val = JSON.parse(val);
+        }
+        return Array.isArray(val) ? val : [];
+      } catch (err) {
+        console.error('Error parsing JSON for ' + id, err);
+        return [];
+      }
+    };
 
-    // Ensure the chart instances are created only if the canvas exists
+    const ordersData = parseJson('orders-data');
+    const itemData = parseJson('item-data');
+    const courierData = parseJson('courier-data');
+
+    console.log("Chart Data:", ordersData, itemData, courierData);
+
+    // 1. Line Chart: Orders per day (last 14 days)
     const ordersCanvas = document.getElementById('ordersChart');
-    if (ordersCanvas && ordersData) {
+    if (ordersCanvas && ordersData.length) {
       const existing = Chart.getChart(ordersCanvas);
       if (existing) existing.destroy();
       new Chart(ordersCanvas, {
         type: 'line',
         data: {
-          labels: ordersData.map(d => d.date || d.label || d),
+          labels: ordersData.map(d => d.date),
           datasets: [{
             label: 'Orders',
-            data: ordersData.map(d => (d.count !== undefined ? d.count : d)),
+            data: ordersData.map(d => d.count),
             borderColor: '#22c55e',
             backgroundColor: 'rgba(34, 197, 94, 0.12)',
             fill: true,
@@ -255,50 +234,57 @@
       });
     }
 
-    const areaCanvas = document.getElementById('areaChart');
-    if (areaCanvas && itemData) {
-      const existing = Chart.getChart(areaCanvas);
+    // 2. Doughnut Chart: Deliveries by Item Type
+    const itemCanvas = document.getElementById('itemChart') || document.getElementById('areaChart');
+    if (itemCanvas && itemData.length) {
+      const existing = Chart.getChart(itemCanvas);
       if (existing) existing.destroy();
-      new Chart(areaCanvas, {
-        type: 'bar',
+      new Chart(itemCanvas, {
+        type: 'doughnut',
         data: {
-          labels: itemData.map(d => d.area || d.label || d),
+          labels: itemData.map(d => d.label || d.item_type),
           datasets: [{
-            label: 'Deliveries',
-            data: itemData.map(d => (d.count !== undefined ? d.count : d)),
-            backgroundColor: '#05192d',
-            borderRadius: 6
+            data: itemData.map(d => d.count),
+            backgroundColor: [
+              '#22c55e',
+              '#3b82f6',
+              '#f59e0b',
+              '#8b5cf6',
+              '#ec4899',
+              '#64748b'
+            ],
+            borderWidth: 2,
+            borderColor: '#ffffff'
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: { display: false }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: { precision: 0 }
+            legend: {
+              position: 'bottom',
+              labels: { boxWidth: 12, font: { size: 11 } }
             }
           }
         }
       });
     }
 
+    // 3. Bar Chart: Top Couriers by Deliveries
     const courierCanvas = document.getElementById('courierChart');
-    if (courierCanvas) {
+    if (courierCanvas && courierData.length) {
       const existing = Chart.getChart(courierCanvas);
       if (existing) existing.destroy();
       new Chart(courierCanvas, {
         type: 'bar',
         data: {
-          labels: ['demo_courier', 'Ali Raza', 'Usman Khan', 'Bilal Ahmed', 'Hassan Tariq'],
+          labels: courierData.map(d => d.username),
           datasets: [{
-            label: 'Completed Deliveries',
-            data: [18, 14, 12, 9, 7],
-            backgroundColor: '#3b82f6',
-            borderRadius: 6
+            label: 'Deliveries',
+            data: courierData.map(d => d.count),
+            backgroundColor: '#05192d',
+            borderRadius: 6,
+            maxBarThickness: 48
           }]
         },
         options: {

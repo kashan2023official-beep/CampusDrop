@@ -16,8 +16,9 @@
           <tr>
             <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Username</th>
             <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Email</th>
+            <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Role</th>
+            <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Deliveries</th>
             <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Phone</th>
-            <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Role Mode</th>
             <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Permissions</th>
             <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Rating</th>
             <th class="text-left text-[10px] uppercase tracking-wide text-brand-navySubtext font-medium px-4 py-3">Joined</th>
@@ -28,7 +29,6 @@
             <tr class="border-t border-brand-grey hover:bg-brand-greySubtle transition-colors">
               <td class="px-4 py-3 font-semibold text-sm text-brand-navy">{{ u.username }}</td>
               <td class="px-4 py-3 text-sm text-brand-navySubtext">{{ u.email|default:"—" }}</td>
-              <td class="px-4 py-3 text-sm text-brand-navySubtext">{{ u.profile.phone|default:"—" }}</td>
               <td class="px-4 py-3">
                 {% if u.profile.is_courier %}
                   {% include "components/_badge.html" with label="Courier" variant="green" %}
@@ -36,6 +36,8 @@
                   {% include "components/_badge.html" with label="Sender" variant="blue" %}
                 {% endif %}
               </td>
+              <td class="px-4 py-3 font-semibold text-sm text-brand-navy">{{ u.delivery_count|default:"0" }}</td>
+              <td class="px-4 py-3 text-sm text-brand-navySubtext">{{ u.profile.phone|default:"—" }}</td>
               <td class="px-4 py-3 text-sm">
                 {% if u.is_superuser %}
                   <span class="text-brand-purple font-semibold">Superuser</span>
@@ -49,7 +51,7 @@
               <td class="px-4 py-3 text-sm text-brand-navySubtext whitespace-nowrap">{{ u.date_joined|date:"M d, Y" }}</td>
             </tr>
           {% empty %}
-            <tr><td colspan="6" class="px-4 py-6 text-center text-sm text-brand-navySubtext">No users found.</td></tr>
+            <tr><td colspan="8" class="px-4 py-6 text-center text-sm text-brand-navySubtext">No users found.</td></tr>
           {% endfor %}
         </tbody>
       </table>
